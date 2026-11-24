@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ZoomIn, X, Calendar, MapPin, Sparkles } from "lucide-react";
+import { ZoomIn, X, Calendar, MapPin } from "lucide-react";
 
 export function FlyerPreviewCard() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,15 +37,10 @@ export function FlyerPreviewCard() {
             </span>
           </button>
 
-          {/* Badge superior */}
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/95 text-emerald-950 shadow-sm backdrop-blur-sm">
-              <Sparkles className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
-              Flyer Oficial
-            </span>
-
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-orange-600 text-white shadow-sm">
-              21-24 JAN 2026
+          {/* Badge superior com a Data */}
+          <div className="absolute top-3 right-3 pointer-events-none">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-black bg-orange-600 text-white shadow-md">
+              21-24 JAN 2027
             </span>
           </div>
 
@@ -127,12 +122,12 @@ export function FlyerPreviewCard() {
             <div className="p-3.5 bg-slate-900/90 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
               <span className="text-[11px] text-slate-400 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-orange-400" />
-                21 a 24 de Janeiro de 2026 • Luanda
+                21 a 24 de Janeiro de 2027 • Luanda
               </span>
 
               <a
                 href="/images/flyer-oficial.jpg"
-                download="Flyer-Oficial-CDJ-Luanda-2026.jpg"
+                download="Flyer-Oficial-CDJ-Luanda-2027.jpg"
                 className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition-colors"
               >
                 Descarregar Imagem

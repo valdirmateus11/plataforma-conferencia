@@ -46,7 +46,7 @@ export function ConferenceLogo({
               variant === "dark" ? "text-white" : "text-slate-900"
             } ${dimensions.textTitle}`}
           >
-            D.D.J.L — Luanda
+            DDJL
           </p>
           <p
             className={`font-semibold uppercase tracking-wide truncate ${
@@ -60,7 +60,7 @@ export function ConferenceLogo({
               variant === "dark" ? "text-slate-400" : "text-slate-500"
             }`}
           >
-            III Sessão Bienal 2026
+            IIIª Sessão Bienal Ordinária
           </p>
         </div>
       )}

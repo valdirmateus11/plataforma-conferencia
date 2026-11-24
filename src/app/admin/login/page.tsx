@@ -40,7 +40,7 @@ function LoginForm() {
             autoComplete="email"
             placeholder="operador@cdjluanda.ao"
             disabled={isPending}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm transition-colors focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
           />
           <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
         </div>
@@ -62,7 +62,7 @@ function LoginForm() {
             autoComplete="current-password"
             placeholder="••••••••"
             disabled={isPending}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm transition-colors focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
           />
           <KeyRound className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
         </div>
@@ -93,8 +93,8 @@ function LoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <main className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-slate-100 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200/90 shadow-xl p-8 sm:p-10 text-center">
+    <main className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-[#F1F5F9] sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-[#F1F5F9] rounded-3xl border border-slate-300/90 shadow-xl p-8 sm:p-10 text-center">
         {/* Logótipo Oficial DDJL */}
         <div className="flex justify-center mb-6">
           <ConferenceLogo size="lg" href="/" />

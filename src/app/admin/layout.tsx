@@ -107,7 +107,7 @@ export default async function AdminLayout({
   ];
 
   return (
-    <div className="min-h-screen flex bg-slate-100">
+    <div className="min-h-screen flex bg-[#F1F5F9]">
       {/* Barra Lateral / Sidebar (Desktop) */}
       <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800">
         {/* Logótipo e Nome Institucional */}
@@ -183,7 +183,7 @@ export default async function AdminLayout({
 
       {/* Conteúdo Principal da Área Administrativa */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <header className="bg-[#F1F5F9] border-b border-slate-200 px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3 text-xs text-slate-500">
             <ConferenceLogo size="sm" showText={false} href="/admin/dashboard" />
             <div className="flex items-center gap-2">

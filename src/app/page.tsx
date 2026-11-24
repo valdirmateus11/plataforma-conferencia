@@ -43,9 +43,9 @@ export default async function HomePage() {
   const canRegister = isRegistrationOpen && !isCapacityReached;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/70 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#F1F5F9] overflow-x-hidden">
       {/* Cabeçalho Oficial da Aplicação */}
-      <header className="bg-white/95 border-b border-slate-200 sticky top-0 z-30 backdrop-blur-md shadow-xs">
+      <header className="bg-[#F1F5F9]/95 border-b border-slate-200 sticky top-0 z-30 backdrop-blur-md shadow-xs">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:px-6 flex items-center justify-between gap-4">
           <ConferenceLogo size="md" href="/" />
 
@@ -102,7 +102,7 @@ export default async function HomePage() {
 
               {/* Informações de Local e Data (Ícones Limpos sem Fundo) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs text-left">
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#F1F5F9] border border-slate-300/80 shadow-xs text-left">
                   <Calendar className="w-6 h-6 text-orange-600 shrink-0" />
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -114,7 +114,7 @@ export default async function HomePage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs text-left">
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#F1F5F9] border border-slate-300/80 shadow-xs text-left">
                   <MapPin className="w-6 h-6 text-emerald-700 shrink-0" />
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -148,7 +148,7 @@ export default async function HomePage() {
         {/* Separador Visual com Grafismo Inspirado no Flyer */}
         <div className="my-8 relative flex items-center justify-center">
           <div className="w-full h-px bg-gradient-to-r from-transparent via-emerald-800/20 to-transparent" />
-          <div className="absolute px-4 bg-slate-50/70 text-xs font-bold uppercase tracking-widest text-emerald-950/70">
+          <div className="absolute px-4 bg-[#F1F5F9] text-xs font-bold uppercase tracking-widest text-emerald-950/70">
             Ficha de Registo Oficial
           </div>
         </div>

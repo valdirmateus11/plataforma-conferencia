@@ -45,7 +45,7 @@ function SuccessContent() {
   };
 
   return (
-    <div className="max-w-xl w-full bg-white rounded-3xl border border-slate-200/90 shadow-xl p-6 sm:p-10 text-center">
+    <div className="max-w-xl w-full bg-[#F1F5F9] rounded-3xl border border-slate-300/90 shadow-xl p-6 sm:p-10 text-center">
       {/* Logótipo Oficial DDJL */}
       <div className="flex justify-center mb-6">
         <ConferenceLogo size="lg" href="/" />
@@ -73,20 +73,20 @@ function SuccessContent() {
       </p>
 
       {/* Caixa de Destaque do Código Único de Inscrição */}
-      <div className="bg-gradient-to-b from-emerald-50/70 to-slate-50 border border-emerald-200/90 rounded-2xl p-5 mb-6 text-center">
+      <div className="bg-gradient-to-b from-emerald-50/70 to-slate-200/50 border border-emerald-200/90 rounded-2xl p-5 mb-6 text-center">
         <p className="text-xs uppercase tracking-wider text-emerald-900 font-bold mb-2">
           O seu Código Único de Inscrição (Apresentar no Balcão)
         </p>
 
         <div className="flex items-center justify-center gap-3">
-          <span className="text-2xl sm:text-3xl font-mono font-black tracking-widest text-emerald-900 bg-white px-5 py-2.5 rounded-2xl border-2 border-emerald-600/40 shadow-sm">
+          <span className="text-2xl sm:text-3xl font-mono font-black tracking-widest text-emerald-900 bg-[#F1F5F9] px-5 py-2.5 rounded-2xl border-2 border-emerald-600/40 shadow-sm">
             {registrationCode || "CDJ26-PENDENTE"}
           </span>
 
           <button
             onClick={handleCopyCode}
             type="button"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold border border-slate-300 bg-white hover:bg-slate-50 active:scale-95 transition-all text-slate-700 shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold border border-slate-300 bg-[#F1F5F9] hover:bg-slate-200 active:scale-95 transition-all text-slate-700 shadow-sm"
             title="Copiar código para a área de transferência"
           >
             {copied ? (
@@ -109,7 +109,7 @@ function SuccessContent() {
       </div>
 
       {/* Instruções Oficiais para o Dia da Conferência */}
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:p-5 text-left space-y-3 mb-6 text-xs text-slate-700">
+      <div className="rounded-2xl border border-slate-300/80 bg-[#F1F5F9] p-4 sm:p-5 text-left space-y-3 mb-6 text-xs text-slate-700">
         <div className="flex items-center gap-2 text-slate-900 font-bold border-b border-slate-200/80 pb-2">
           <ShieldCheck className="w-4 h-4 text-emerald-700" />
           <span>Informações de Acolhimento e Credenciamento</span>
@@ -143,7 +143,7 @@ function SuccessContent() {
       <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
         <Link
           href="/"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-[#F1F5F9] px-5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition-colors shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar à Página Inicial
@@ -155,7 +155,7 @@ function SuccessContent() {
 
 export default function RegistrationSuccessPage() {
   return (
-    <main className="flex-1 min-h-screen flex flex-col justify-center items-center px-4 py-12 sm:px-6 lg:px-8 bg-slate-50/80">
+    <main className="flex-1 min-h-screen flex flex-col justify-center items-center px-4 py-12 sm:px-6 lg:px-8 bg-[#F1F5F9]">
       <Suspense
         fallback={
           <div className="max-w-xl w-full bg-white rounded-3xl p-10 text-center border border-slate-200">

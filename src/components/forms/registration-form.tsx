@@ -174,7 +174,7 @@ export function RegistrationForm() {
       )}
 
       {/* SECÇÃO 1: Identificação Pessoal */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
             <User className="w-4 h-4 text-emerald-700" />
@@ -206,7 +206,7 @@ export function RegistrationForm() {
               className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
                 errors.fullName
                   ? "border-rose-300 bg-rose-50/50 focus:ring-rose-500"
-                  : "border-slate-300 bg-white focus:border-emerald-600 focus:ring-emerald-500/20"
+                  : "border-slate-300 bg-[#F1F5F9] focus:border-emerald-600 focus:ring-emerald-500/20"
               }`}
             />
             {errors.fullName && (
@@ -229,7 +229,7 @@ export function RegistrationForm() {
                 value={formData.sex}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 <option value="Masculino">Masculino</option>
                 <option value="Feminino">Feminino</option>
@@ -256,7 +256,7 @@ export function RegistrationForm() {
                   className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
                     errors.phone
                       ? "border-rose-300 bg-rose-50/50 focus:ring-rose-500"
-                      : "border-slate-300 bg-white focus:border-emerald-600 focus:ring-emerald-500/20"
+                      : "border-slate-300 bg-[#F1F5F9] focus:border-emerald-600 focus:ring-emerald-500/20"
                   }`}
                 />
                 <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
@@ -274,7 +274,7 @@ export function RegistrationForm() {
       </div>
 
       {/* SECÇÃO 2: Origem Eclesiástica e Localização */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
             <Church className="w-4 h-4 text-emerald-700" />
@@ -302,7 +302,7 @@ export function RegistrationForm() {
                   value={formData.municipality}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 appearance-none"
+                  className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 appearance-none"
                 >
                   {LUANDA_MUNICIPALITIES.map((mun) => (
                     <option key={mun} value={mun}>
@@ -328,7 +328,7 @@ export function RegistrationForm() {
                 value={formData.ecclesiasticalDistrict}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {PROVISIONAL_DISTRICTS.map((dist) => (
                   <option key={dist} value={dist}>
@@ -359,7 +359,7 @@ export function RegistrationForm() {
               className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
                 errors.localChurch
                   ? "border-rose-300 bg-rose-50/50 focus:ring-rose-500"
-                  : "border-slate-300 bg-white focus:border-emerald-600 focus:ring-emerald-500/20"
+                  : "border-slate-300 bg-[#F1F5F9] focus:border-emerald-600 focus:ring-emerald-500/20"
               }`}
             />
             {errors.localChurch && (
@@ -370,7 +370,7 @@ export function RegistrationForm() {
       </div>
 
       {/* SECÇÃO 3: Participação e Delegação */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-emerald-700" />
@@ -397,7 +397,7 @@ export function RegistrationForm() {
                 value={formData.participantCategory}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {PARTICIPANT_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -421,7 +421,7 @@ export function RegistrationForm() {
                 value={formData.organizationalRole}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {ORGANIZATIONAL_ROLES.map((role) => (
                   <option key={role} value={role}>
@@ -450,7 +450,7 @@ export function RegistrationForm() {
                 placeholder="Ex.: Animador Juvenil / Representante Distrital"
                 maxLength={80}
                 disabled={isSubmitting}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3.5 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
           )}
@@ -474,7 +474,7 @@ export function RegistrationForm() {
                 placeholder="Nome do Líder ou Pastor que chefia a delegação"
                 maxLength={120}
                 disabled={isSubmitting}
-                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm bg-white transition-colors focus:outline-none focus:ring-2 ${
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm bg-[#F1F5F9] transition-colors focus:outline-none focus:ring-2 ${
                   errors.delegationResponsible
                     ? "border-rose-300 focus:ring-rose-500"
                     : "border-slate-300 focus:border-emerald-600 focus:ring-emerald-500/20"

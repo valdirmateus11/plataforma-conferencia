@@ -10,7 +10,7 @@ export function FlyerPreviewCard() {
   return (
     <>
       {/* Card de Visualização do Flyer na Página Inicial */}
-      <div className="relative group bg-white rounded-3xl p-3.5 border border-emerald-950/10 shadow-xl shadow-emerald-950/5 hover:shadow-emerald-950/10 transition-all duration-300">
+      <div className="relative group bg-[#F1F5F9] rounded-3xl p-3.5 border border-slate-300/80 shadow-xl shadow-slate-900/5 hover:shadow-slate-900/10 transition-all duration-300">
         <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-slate-900 cursor-pointer">
           <Image
             src="/images/flyer-oficial.jpg"
@@ -31,7 +31,7 @@ export function FlyerPreviewCard() {
             onClick={() => setIsOpen(true)}
             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-emerald-950/40 backdrop-blur-xs"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-emerald-950 text-xs font-bold shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-transform">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F1F5F9]/95 text-emerald-950 text-xs font-bold shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-transform">
               <ZoomIn className="w-4 h-4 text-emerald-700" />
               Ampliar Flyer Oficial
             </span>

@@ -27,7 +27,7 @@ export function ConferenceLogo({
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Logótipo Oficial DDJL */}
       <div
-        className={`relative ${dimensions.box} shrink-0 rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 flex items-center justify-center overflow-hidden p-0.5`}
+        className={`relative ${dimensions.box} shrink-0 rounded-2xl bg-[#F1F5F9] shadow-sm ring-1 ring-slate-300/80 flex items-center justify-center overflow-hidden p-0.5`}
       >
         <Image
           src="/images/logo-ddjl-badge.png"

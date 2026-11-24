@@ -177,7 +177,7 @@ export function RegistrationForm() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-            <User className="w-4 h-4 text-blue-600" />
+            <User className="w-4 h-4 text-emerald-700" />
             Dados Pessoais
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -206,7 +206,7 @@ export function RegistrationForm() {
               className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
                 errors.fullName
                   ? "border-rose-300 bg-rose-50/50 focus:ring-rose-500"
-                  : "border-slate-300 bg-white focus:border-blue-500 focus:ring-blue-500/20"
+                  : "border-slate-300 bg-white focus:border-emerald-600 focus:ring-emerald-500/20"
               }`}
             />
             {errors.fullName && (
@@ -256,7 +256,7 @@ export function RegistrationForm() {
                   className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
                     errors.phone
                       ? "border-rose-300 bg-rose-50/50 focus:ring-rose-500"
-                      : "border-slate-300 bg-white focus:border-blue-500 focus:ring-blue-500/20"
+                      : "border-slate-300 bg-white focus:border-emerald-600 focus:ring-emerald-500/20"
                   }`}
                 />
                 <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
@@ -277,7 +277,7 @@ export function RegistrationForm() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-            <Church className="w-4 h-4 text-blue-600" />
+            <Church className="w-4 h-4 text-emerald-700" />
             Dados Eclesiásticos e Localização
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -359,7 +359,7 @@ export function RegistrationForm() {
               className={`w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 ${
                 errors.localChurch
                   ? "border-rose-300 bg-rose-50/50 focus:ring-rose-500"
-                  : "border-slate-300 bg-white focus:border-blue-500 focus:ring-blue-500/20"
+                  : "border-slate-300 bg-white focus:border-emerald-600 focus:ring-emerald-500/20"
               }`}
             />
             {errors.localChurch && (
@@ -373,7 +373,7 @@ export function RegistrationForm() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
-            <Briefcase className="w-4 h-4 text-blue-600" />
+            <Briefcase className="w-4 h-4 text-emerald-700" />
             Função e Participação
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -462,7 +462,7 @@ export function RegistrationForm() {
                 htmlFor="delegationResponsible"
                 className="block text-xs font-medium text-slate-800 flex items-center gap-1.5"
               >
-                <Users className="w-3.5 h-3.5 text-blue-600" />
+                <Users className="w-3.5 h-3.5 text-emerald-700" />
                 Responsável da Delegação <span className="text-rose-500">*</span>
               </label>
               <input
@@ -477,7 +477,7 @@ export function RegistrationForm() {
                 className={`w-full rounded-xl border px-3.5 py-2.5 text-sm bg-white transition-colors focus:outline-none focus:ring-2 ${
                   errors.delegationResponsible
                     ? "border-rose-300 focus:ring-rose-500"
-                    : "border-slate-300 focus:border-blue-500 focus:ring-blue-500/20"
+                    : "border-slate-300 focus:border-emerald-600 focus:ring-emerald-500/20"
                 }`}
               />
               {errors.delegationResponsible ? (
@@ -497,7 +497,7 @@ export function RegistrationForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-800 via-emerald-700 to-emerald-800 hover:from-emerald-900 hover:to-emerald-900 px-6 py-4 text-sm font-bold text-white shadow-lg shadow-emerald-950/15 transition-all active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <>
@@ -506,7 +506,7 @@ export function RegistrationForm() {
             </>
           ) : (
             <>
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-300" />
               Submeter Inscrição na Conferência
             </>
           )}

@@ -15,6 +15,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { getCurrentAdmin, signOutAdmin } from "@/features/administration/actions/auth-actions";
+import { ConferenceLogo } from "@/components/ui/conference-logo";
 
 export default async function AdminLayout({
   children,
@@ -110,18 +111,8 @@ export default async function AdminLayout({
       {/* Barra Lateral / Sidebar (Desktop) */}
       <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800">
         {/* Logótipo e Nome Institucional */}
-        <div className="p-5 border-b border-slate-800 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm shadow-blue-500/20">
-            CDJ
-          </div>
-          <div className="overflow-hidden">
-            <h1 className="text-xs font-bold text-white uppercase tracking-wider truncate">
-              Painel de Gestão
-            </h1>
-            <p className="text-[10px] text-slate-400 truncate">
-              III Sessão Bienal Luanda
-            </p>
-          </div>
+        <div className="p-4 border-b border-slate-800">
+          <ConferenceLogo size="md" variant="dark" href="/admin/dashboard" />
         </div>
 
         {/* Navegação */}
@@ -192,15 +183,18 @@ export default async function AdminLayout({
 
       {/* Conteúdo Principal da Área Administrativa */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span className="font-semibold text-slate-900">
-              Conferência Distrital da Juventude de Luanda
-            </span>
-            <span>•</span>
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-              Ambiente Operacional
-            </span>
+        <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            <ConferenceLogo size="sm" showText={false} href="/admin/dashboard" />
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-900">
+                Conferência Distrital da Juventude de Luanda 2026
+              </span>
+              <span>•</span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                D.D.J.L
+              </span>
+            </div>
           </div>
         </header>
 

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Lock, Mail, KeyRound, ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { signInAdmin } from "@/features/administration/actions/auth-actions";
+import { ConferenceLogo } from "@/components/ui/conference-logo";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -28,7 +29,7 @@ function LoginForm() {
           htmlFor="email"
           className="block text-xs font-medium text-slate-700 mb-1.5"
         >
-          E-mail Administrativo
+          E-mail do Operador / Administrador
         </label>
         <div className="relative">
           <input
@@ -37,9 +38,9 @@ function LoginForm() {
             name="email"
             required
             autoComplete="email"
-            placeholder="admin@conferencia.cdj"
+            placeholder="operador@cdjluanda.ao"
             disabled={isPending}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
           />
           <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
         </div>
@@ -61,7 +62,7 @@ function LoginForm() {
             autoComplete="current-password"
             placeholder="••••••••"
             disabled={isPending}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
           />
           <KeyRound className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
         </div>
@@ -71,17 +72,17 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-800 via-emerald-700 to-emerald-800 hover:from-emerald-900 hover:to-emerald-900 px-5 py-3 text-sm font-bold text-white shadow-md shadow-emerald-950/15 transition-all active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isPending ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              A autenticar...
+              A autenticar operador...
             </>
           ) : (
             <>
-              <Lock className="w-4 h-4" />
-              Entrar no Painel
+              <Lock className="w-4 h-4 text-emerald-300" />
+              Entrar no Painel de Operações
             </>
           )}
         </button>
@@ -93,18 +94,18 @@ function LoginForm() {
 export default function AdminLoginPage() {
   return (
     <main className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-slate-100 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200/90 shadow-sm p-8 sm:p-10 text-center">
-        {/* Ícone e Título */}
-        <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto mb-4 shadow-sm shadow-blue-500/20">
-          <Lock className="w-6 h-6" />
+      <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200/90 shadow-xl p-8 sm:p-10 text-center">
+        {/* Logótipo Oficial DDJL */}
+        <div className="flex justify-center mb-6">
+          <ConferenceLogo size="lg" href="/" />
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mb-1">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 mb-1">
           Acesso Administrativo
         </h1>
 
-        <p className="text-xs text-slate-500 mb-6">
-          III Sessão Bienal da Conferência Distrital da Juventude de Luanda
+        <p className="text-xs text-slate-500 mb-6 font-medium">
+          III Sessão Bienal da Conferência Distrital da Juventude de Luanda 2026
         </p>
 
         <Suspense
@@ -121,12 +122,12 @@ export default function AdminLoginPage() {
         <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            Acesso reservado exclusivamente à organização autorizada.
+            Acesso reservado exclusivamente aos operadores e secretariado.
           </div>
 
           <Link
             href="/"
-            className="inline-flex items-center gap-1 font-medium text-slate-600 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-1 font-semibold text-slate-600 hover:text-emerald-700 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Voltar ao Formulário Público de Inscrição

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -136,7 +136,7 @@ export default async function RegistrationDetailPage({ params }: Props) {
       {/* Grid de Informações Detalhadas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Bloco 1: Dados Pessoais */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <User className="w-4 h-4 text-blue-600" />
             Dados Pessoais
@@ -175,7 +175,7 @@ export default async function RegistrationDetailPage({ params }: Props) {
         </div>
 
         {/* Bloco 2: Origem Eclesiástica */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <Church className="w-4 h-4 text-blue-600" />
             Origem Eclesiástica
@@ -205,7 +205,7 @@ export default async function RegistrationDetailPage({ params }: Props) {
         </div>
 
         {/* Bloco 3: Função e Delegação */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-blue-600" />
             Função e Participação
@@ -244,7 +244,7 @@ export default async function RegistrationDetailPage({ params }: Props) {
         </div>
 
         {/* Bloco 4: Estado de Credenciamento e Presenças */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-blue-600" />
             Credenciamento & Presenças

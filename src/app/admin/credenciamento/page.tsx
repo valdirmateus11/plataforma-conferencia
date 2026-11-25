@@ -34,7 +34,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
 
   if (!currentAdmin || !hasAccess) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
         <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -63,7 +63,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200">
         <h2 className="text-base font-bold text-slate-900">Conferência não configurada</h2>
       </div>
     );
@@ -201,7 +201,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
 
       {/* Cartões de Indicadores Rápidos do Secretariado */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Users className="w-4 h-4 text-blue-600" />
             Inscrições Aprovadas (Elegíveis)
@@ -210,7 +210,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
           <div className="text-[11px] text-slate-400 mt-0.5">Teto oficial de capacidade: {conference.capacity}</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-emerald-200 bg-emerald-50/20 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-emerald-200 bg-emerald-50/20 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-emerald-700 text-xs font-semibold">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             Credenciamentos Concluídos
@@ -219,7 +219,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
           <div className="text-[11px] text-emerald-600/80 mt-0.5">Crachás e kits já entregues</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-amber-200 bg-amber-50/20 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-amber-200 bg-amber-50/20 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-amber-700 text-xs font-semibold">
             <Clock className="w-4 h-4 text-amber-600" />
             Aguardando Chegada no Local
@@ -233,7 +233,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
       <AccreditationSearchInput currentQuery={searchQuery} currentFilter={filterType} />
 
       {/* Tabela de Resultados de Pesquisa */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Search className="w-4 h-4 text-slate-600" />

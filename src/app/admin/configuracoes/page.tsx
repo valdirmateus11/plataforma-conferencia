@@ -12,7 +12,7 @@ export default async function AdminConfiguracoesPage() {
 
   if (!isAllowed) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
         <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -35,7 +35,7 @@ export default async function AdminConfiguracoesPage() {
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200">
         <h2 className="text-base font-bold text-slate-900">Conferência não encontrada</h2>
         <p className="text-xs text-slate-500 mt-1">Execute o script de seed inicial da base de dados.</p>
       </div>
@@ -71,7 +71,7 @@ export default async function AdminConfiguracoesPage() {
 
       {/* Cartão de Informação de Segurança & Procedimentos de Continuidade */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+        <div className="p-5 rounded-2xl bg-[#F1F5F9] border border-slate-200 shadow-sm space-y-2">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
             <Info className="w-4 h-4 text-blue-600" />
             Trava Transacional de Lotação
@@ -84,7 +84,7 @@ export default async function AdminConfiguracoesPage() {
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+        <div className="p-5 rounded-2xl bg-[#F1F5F9] border border-slate-200 shadow-sm space-y-2">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             Auditoria em Todas as Modificações

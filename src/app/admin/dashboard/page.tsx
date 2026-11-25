@@ -1,4 +1,5 @@
-import Link from "next/link";
+﻿import Link from "next/link";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import {
   Users,
@@ -21,12 +22,12 @@ export default async function AdminDashboardPage() {
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name, capacity, registration_open")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-xl shadow-sm border border-slate-200">
         <h2 className="text-xl font-bold text-slate-900">Conferência não encontrada</h2>
         <p className="text-slate-600 mt-2">Execute o seed inicial da base de dados.</p>
       </div>
@@ -34,7 +35,7 @@ export default async function AdminDashboardPage() {
   }
 
   const confId = conference.id;
-  const capacity = conference.capacity || 500;
+  const capacity = conference?.capacity || CONFERENCE_CONFIG.capacity;
 
   // 2. Obter contagens agregadas da tabela registrations
   const { count: totalRegistrations } = await supabase
@@ -146,7 +147,7 @@ export default async function AdminDashboardPage() {
       )}
 
       {/* Bloco 1: Controlo de Vagas e Capacidade (Limite 500) */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Gauge className="w-5 h-5 text-blue-600" />
@@ -198,7 +199,7 @@ export default async function AdminDashboardPage() {
       {/* Bloco 2: Cards com Métricas das Inscrições e Credenciamento */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Inscrições */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
             <span className="text-xs font-medium">Total de Registos</span>
             <Users className="w-4 h-4 text-slate-400" />
@@ -210,7 +211,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Pendentes */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-amber-600">
             <span className="text-xs font-medium">Inscrições Pendentes</span>
             <Clock className="w-4 h-4" />
@@ -222,7 +223,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Aprovadas */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-emerald-600">
             <span className="text-xs font-medium">Inscrições Aprovadas</span>
             <CheckCircle2 className="w-4 h-4" />
@@ -234,7 +235,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Rejeitadas/Canceladas */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-rose-600">
             <span className="text-xs font-medium">Rejeitadas / Canceladas</span>
             <XCircle className="w-4 h-4" />
@@ -248,7 +249,7 @@ export default async function AdminDashboardPage() {
 
       {/* Bloco 3: Credenciamento e Presenças */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1.5">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1.5">
           <div className="flex items-center gap-2 text-blue-600 text-xs font-semibold">
             <UserCheck className="w-4 h-4" />
             Credenciados no Local
@@ -257,7 +258,7 @@ export default async function AdminDashboardPage() {
           <p className="text-[11px] text-slate-500">Participantes já com credencial física</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1.5">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1.5">
           <div className="flex items-center gap-2 text-slate-600 text-xs font-semibold">
             <UserX className="w-4 h-4 text-slate-400" />
             Aprovados Não Credenciados
@@ -266,7 +267,7 @@ export default async function AdminDashboardPage() {
           <p className="text-[11px] text-slate-500">Ainda não se apresentaram no balcão</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1.5">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1.5">
           <div className="flex items-center gap-2 text-indigo-600 text-xs font-semibold">
             <CheckCircle2 className="w-4 h-4" />
             Total de Registos de Presença
@@ -277,7 +278,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Bloco 4: Inscrições Recentes */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
             <h3 className="text-sm font-bold text-slate-900">

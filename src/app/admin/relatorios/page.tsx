@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import {
   FileSpreadsheet,
@@ -25,7 +26,7 @@ export default async function AdminRelatoriosPage() {
 
   if (!currentAdmin || !hasAccess) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
         <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -44,12 +45,12 @@ export default async function AdminRelatoriosPage() {
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name, capacity")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200">
         <h2 className="text-base font-bold text-slate-900">Conferência não configurada</h2>
       </div>
     );
@@ -170,7 +171,7 @@ export default async function AdminRelatoriosPage() {
 
       {/* Cartões de Indicadores Gerais */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Users className="w-4 h-4 text-blue-600" />
             Total Inscrições
@@ -179,7 +180,7 @@ export default async function AdminRelatoriosPage() {
           <div className="text-[11px] text-slate-400 mt-0.5">Capacidade: {conference.capacity}</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             Inscrições Aprovadas
@@ -188,7 +189,7 @@ export default async function AdminRelatoriosPage() {
           <div className="text-[11px] text-slate-400 mt-0.5">Aptos ao credenciamento</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <PieChart className="w-4 h-4 text-purple-600" />
             Credenciados
@@ -197,7 +198,7 @@ export default async function AdminRelatoriosPage() {
           <div className="text-[11px] text-slate-400 mt-0.5">Crachás entregues no local</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Calendar className="w-4 h-4 text-cyan-600" />
             Presenças Totais
@@ -213,7 +214,7 @@ export default async function AdminRelatoriosPage() {
       {/* Relatórios Demográficos e Distribuição Territorial */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Distribuição por Intendência */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-blue-600" />
             Por Intendência ({sortedDistricts.length})
@@ -247,7 +248,7 @@ export default async function AdminRelatoriosPage() {
         </div>
 
         {/* Distribuição por Município */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-emerald-600" />
             Por Município de Luanda ({sortedMunicipalities.length})
@@ -281,7 +282,7 @@ export default async function AdminRelatoriosPage() {
         </div>
 
         {/* Distribuição por Categoria & Género */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Layers className="w-4 h-4 text-purple-600" />
             Categoria & Género
@@ -291,7 +292,7 @@ export default async function AdminRelatoriosPage() {
           <div className="p-3 bg-slate-50 rounded-xl space-y-2">
             <div className="text-[11px] font-semibold text-slate-600">Distribuição por Sexo:</div>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2 rounded-lg bg-white border border-slate-200">
+              <div className="p-2 rounded-lg bg-[#F1F5F9] border border-slate-200">
                 <span className="text-slate-400 text-[10px]">Masculino:</span>
                 <div className="font-bold text-slate-900 font-mono text-sm">{maleCount}</div>
                 <div className="text-[10px] text-slate-400">
@@ -299,7 +300,7 @@ export default async function AdminRelatoriosPage() {
                 </div>
               </div>
 
-              <div className="p-2 rounded-lg bg-white border border-slate-200">
+              <div className="p-2 rounded-lg bg-[#F1F5F9] border border-slate-200">
                 <span className="text-slate-400 text-[10px]">Feminino:</span>
                 <div className="font-bold text-slate-900 font-mono text-sm">{femaleCount}</div>
                 <div className="text-[10px] text-slate-400">

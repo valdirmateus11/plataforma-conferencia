@@ -21,7 +21,7 @@ export default async function AdminUtilizadoresPage() {
 
   if (!currentAdmin || !currentAdmin.isSuperAdmin) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
         <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -82,7 +82,7 @@ export default async function AdminUtilizadoresPage() {
 
       {/* Cartões de Indicadores */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Users className="w-4 h-4 text-blue-600" />
             Total Contas
@@ -90,7 +90,7 @@ export default async function AdminUtilizadoresPage() {
           <div className="text-2xl font-black text-slate-900 mt-2">{allProfiles.length}</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <CheckCircle className="w-4 h-4 text-emerald-600" />
             Contas Ativas
@@ -98,7 +98,7 @@ export default async function AdminUtilizadoresPage() {
           <div className="text-2xl font-black text-emerald-600 mt-2">{activeCount}</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Ban className="w-4 h-4 text-slate-400" />
             Contas Inativas
@@ -106,7 +106,7 @@ export default async function AdminUtilizadoresPage() {
           <div className="text-2xl font-black text-slate-500 mt-2">{inactiveCount}</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Shield className="w-4 h-4 text-purple-600" />
             Superadmins
@@ -116,7 +116,7 @@ export default async function AdminUtilizadoresPage() {
       </div>
 
       {/* Tabela de Utilizadores */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Users className="w-4 h-4 text-slate-600" />

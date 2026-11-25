@@ -26,7 +26,7 @@ export default async function AdminOrganizacoesPage() {
       </div>
 
       {/* Formulário de Registo de Nova Organização */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
         <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Plus className="w-4 h-4 text-blue-600" />
           Registar Nova Igreja / Congregação
@@ -59,7 +59,7 @@ export default async function AdminOrganizacoesPage() {
             <select
               name="municipality"
               required
-              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none bg-[#F1F5F9]"
             >
               {LUANDA_MUNICIPALITIES.map((mun) => (
                 <option key={mun} value={mun}>
@@ -76,7 +76,7 @@ export default async function AdminOrganizacoesPage() {
             <select
               name="district"
               required
-              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none bg-white"
+              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none bg-[#F1F5F9]"
             >
               {INTENDENCIAS.map((dist) => (
                 <option key={dist} value={dist}>
@@ -99,7 +99,7 @@ export default async function AdminOrganizacoesPage() {
       </div>
 
       {/* Lista de Organizações Cadastradas */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
             Igrejas Cadastradas ({organizations?.length || 0})

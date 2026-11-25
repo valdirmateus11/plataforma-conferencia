@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import {
   Calendar,
@@ -25,7 +26,7 @@ export default async function AdminSessoesPage() {
 
   if (!isAllowed) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
         <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -44,12 +45,12 @@ export default async function AdminSessoesPage() {
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200">
         <h2 className="text-base font-bold text-slate-900">Conferência não configurada</h2>
       </div>
     );
@@ -110,7 +111,7 @@ export default async function AdminSessoesPage() {
 
       {/* Cartões de Indicadores */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Calendar className="w-4 h-4 text-blue-600" />
             Total de Sessões Agendadas
@@ -119,7 +120,7 @@ export default async function AdminSessoesPage() {
           <div className="text-[11px] text-slate-400 mt-0.5">Calendário da III Sessão Bienal</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-emerald-200 bg-emerald-50/20 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-emerald-200 bg-emerald-50/20 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-emerald-700 text-xs font-semibold">
             <Play className="w-4 h-4 text-emerald-600 fill-current" />
             Sessões Abertas no Momento
@@ -128,7 +129,7 @@ export default async function AdminSessoesPage() {
           <div className="text-[11px] text-emerald-600/80 mt-0.5">Aceitando registo de presenças</div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 text-slate-500 text-xs font-medium">
             <Lock className="w-4 h-4 text-slate-600" />
             Sessões Encerradas
@@ -148,7 +149,7 @@ export default async function AdminSessoesPage() {
           return (
             <div
               key={session.id}
-              className={`bg-white rounded-2xl border p-5 shadow-sm transition ${
+              className={`bg-[#F1F5F9] rounded-2xl border p-5 shadow-sm transition ${
                 session.status === "open"
                   ? "border-emerald-300 ring-2 ring-emerald-50"
                   : "border-slate-200"
@@ -252,7 +253,7 @@ export default async function AdminSessoesPage() {
         })}
 
         {sessionList.length === 0 && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-500 text-xs">
+          <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-12 text-center text-slate-500 text-xs">
             <Calendar className="w-8 h-8 text-slate-300 mx-auto mb-2" />
             Nenhuma sessão plenária configurada até ao momento.
             <div className="text-slate-400 mt-1">

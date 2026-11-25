@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { RegistrationForm } from "@/components/forms/registration-form";
 import { ConferenceLogo } from "@/components/ui/conference-logo";
@@ -71,7 +71,7 @@ export default async function HomePage() {
               {/* Título Principal com Tipografia Forte Inspirada no Flyer */}
               <div className="space-y-1">
                 <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-orange-600 uppercase leading-none">
-                  IIIª SESSÃO BIENAL ORDINÁRIA DA
+                  {CONFERENCE_CONFIG.editionLabel.toUpperCase()}
                 </h2>
 
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 leading-[1.05]">
@@ -84,7 +84,7 @@ export default async function HomePage() {
               </div>
 
               <p className="text-base sm:text-lg font-bold text-emerald-900/90 leading-relaxed">
-                Direção Distrital da Juventude de Luanda
+                {CONFERENCE_CONFIG.orgName}
               </p>
 
               {/* Tema Central do Evento (Sem Card) */}
@@ -183,8 +183,7 @@ export default async function HomePage() {
                 Lotação Máxima Atingida ({capacity} Vagas)
               </h2>
               <p className="text-xs sm:text-sm text-orange-800 max-w-md mx-auto leading-relaxed">
-                Foi atingido o limite máximo de 500 participantes previsto para a IIIª Sessão
-                Bienal Ordinária. O sistema bloqueou automaticamente novas submissões para
+                Foi atingido o limite máximo de {CONFERENCE_CONFIG.capacity} participantes previsto para a {CONFERENCE_CONFIG.editionLabel}. O sistema bloqueou automaticamente novas submissões para
                 garantir a segurança e organização do evento.
               </p>
             </div>
@@ -216,7 +215,7 @@ export default async function HomePage() {
 
             <div className="text-xs space-y-1 text-slate-300">
               <p className="font-bold text-white uppercase tracking-wider">
-                Direção Distrital da Juventude de Luanda
+                {CONFERENCE_CONFIG.orgName}
               </p>
               <p className="text-slate-400">
                 Igreja Metodista Unida • Conferência Anual do Oeste de Angola
@@ -229,8 +228,7 @@ export default async function HomePage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center sm:text-left">
             <p>
-              © 2027 IIIª Sessão Bienal Ordinária da Conferência Distrital da Juventude de
-              Luanda. Todos os direitos reservados.
+              © 2027 {CONFERENCE_CONFIG.name}. Todos os direitos reservados.
             </p>
 
             <Link

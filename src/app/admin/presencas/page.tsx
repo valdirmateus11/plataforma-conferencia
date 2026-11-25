@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import {
@@ -34,7 +35,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
 
   if (!currentAdmin || !hasAccess) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto my-12 space-y-4">
         <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -59,12 +60,12 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-2xl shadow-sm border border-slate-200">
         <h2 className="text-base font-bold text-slate-900">Conferência não configurada</h2>
       </div>
     );
@@ -213,7 +214,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
 
       {/* Painel do Quórum Deliberativo em Tempo Real */}
       {selectedSession && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
             <div className="flex items-center gap-2">
               <PieChart className="w-5 h-5 text-emerald-600" />
@@ -313,7 +314,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
 
       {/* Tabela de Credenciados para Check-in */}
       {selectedSession && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <Users className="w-4 h-4 text-slate-600" />

@@ -1,4 +1,5 @@
-import Link from "next/link";
+﻿import Link from "next/link";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import {
   Users,
@@ -49,12 +50,12 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
   const { data: conference } = await supabase
     .from("conferences")
     .select("id")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {
     return (
-      <div className="p-8 text-center bg-white rounded-xl shadow-sm border border-slate-200">
+      <div className="p-8 text-center bg-[#F1F5F9] rounded-xl shadow-sm border border-slate-200">
         <h2 className="text-xl font-bold text-slate-900">Conferência não encontrada</h2>
         <p className="text-slate-600 mt-2">Execute o seed inicial da base de dados.</p>
       </div>
@@ -128,7 +129,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
       </div>
 
       {/* Barra de Filtros e Pesquisa */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
         <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
           {/* Pesquisa */}
           <div className="lg:col-span-2 relative">
@@ -137,7 +138,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
               name="q"
               defaultValue={searchQuery}
               placeholder="Pesquisar por nome, código, telefone ou e-mail..."
-              className="w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 py-2 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] pl-9 pr-3 py-2 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
           </div>
@@ -147,7 +148,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
             <select
               name="status"
               defaultValue={statusFilter}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Estado: Todos</option>
               <option value="pending">Pendentes</option>
@@ -162,7 +163,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
             <select
               name="district"
               defaultValue={districtFilter}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Intendência: Todas</option>
               {INTENDENCIAS.map((dist) => (
@@ -178,7 +179,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
             <select
               name="category"
               defaultValue={categoryFilter}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Categoria: Todas</option>
               {PARTICIPANT_CATEGORIES.map((cat) => (
@@ -194,7 +195,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
             <select
               name="municipality"
               defaultValue={municipalityFilter}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Município: Todos</option>
               {LUANDA_MUNICIPALITIES.map((mun) => (
@@ -241,7 +242,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
       </div>
 
       {/* Tabela de Inscrições */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {registrations && registrations.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -342,7 +343,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
                   href={`/admin/inscricoes?page=${currentPage - 1}&q=${encodeURIComponent(
                     searchQuery
                   )}&status=${statusFilter}&category=${categoryFilter}&municipality=${municipalityFilter}`}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-[#F1F5F9] hover:bg-slate-50 transition-colors"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                   Anterior
@@ -359,7 +360,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
                   href={`/admin/inscricoes?page=${currentPage + 1}&q=${encodeURIComponent(
                     searchQuery
                   )}&status=${statusFilter}&category=${categoryFilter}&municipality=${municipalityFilter}`}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-[#F1F5F9] hover:bg-slate-50 transition-colors"
                 >
                   Seguinte
                   <ChevronRight className="w-3.5 h-3.5" />

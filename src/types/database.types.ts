@@ -41,11 +41,17 @@ export type Registration = {
   full_name: string;
   sex: string;
   phone: string;
+  /** E-mail do inscrito. Nullable para compatibilidade com registos anteriores à migração 00009. */
+  email: string | null;
   organization_id: string | null;
+  /** Cargo Pastoral do inscrito (coluna reutilizada; historicamente: Igreja Local/Congregação). */
   local_church: string;
+  /** Intendência Eclesiástica (CRISH | MVC | BTS2M | C3K). */
   ecclesiastical_district: string;
   municipality: string;
   organizational_role: string;
+  /** Especificação da função quando organizational_role = 'Outro'. Nullable. */
+  custom_role: string | null;
   participant_category: string;
   delegation_responsible: string | null;
   status: RegistrationStatus;
@@ -168,7 +174,8 @@ export type Database = {
       };
       organizations: {
         Row: Organization;
-        Insert: Partial<Organization> & Pick<Organization, "name" | "municipality" | "ecclesiastical_district">;
+        Insert: Partial<Organization> &
+          Pick<Organization, "name" | "municipality" | "ecclesiastical_district">;
         Update: Partial<Organization>;
         Relationships: [];
       };
@@ -194,7 +201,8 @@ export type Database = {
       };
       admin_profiles: {
         Row: AdminProfile;
-        Insert: Partial<AdminProfile> & Pick<AdminProfile, "id" | "display_name" | "email">;
+        Insert: Partial<AdminProfile> &
+          Pick<AdminProfile, "id" | "display_name" | "email">;
         Update: Partial<AdminProfile>;
         Relationships: [];
       };
@@ -206,38 +214,52 @@ export type Database = {
       };
       admin_user_roles: {
         Row: AdminUserRole;
-        Insert: Partial<AdminUserRole> & Pick<AdminUserRole, "user_id" | "role_id">;
+        Insert: Partial<AdminUserRole> &
+          Pick<AdminUserRole, "user_id" | "role_id">;
         Update: Partial<AdminUserRole>;
         Relationships: [];
       };
       accreditations: {
         Row: Accreditation;
-        Insert: Partial<Accreditation> & Pick<Accreditation, "conference_id" | "registration_id" | "credentialed_by">;
+        Insert: Partial<Accreditation> &
+          Pick<
+            Accreditation,
+            "conference_id" | "registration_id" | "credentialed_by"
+          >;
         Update: Partial<Accreditation>;
         Relationships: [];
       };
       sessions: {
         Row: ConferenceSession;
-        Insert: Partial<ConferenceSession> & Pick<ConferenceSession, "conference_id" | "name" | "session_date">;
+        Insert: Partial<ConferenceSession> &
+          Pick<ConferenceSession, "conference_id" | "name" | "session_date">;
         Update: Partial<ConferenceSession>;
         Relationships: [];
       };
       attendance_records: {
         Row: AttendanceRecord;
         Insert: Partial<AttendanceRecord> &
-          Pick<AttendanceRecord, "conference_id" | "session_id" | "registration_id" | "recorded_by">;
+          Pick<
+            AttendanceRecord,
+            | "conference_id"
+            | "session_id"
+            | "registration_id"
+            | "recorded_by"
+          >;
         Update: Partial<AttendanceRecord>;
         Relationships: [];
       };
       audit_logs: {
         Row: AuditLog;
-        Insert: Pick<AuditLog, "action" | "entity_type" | "entity_id"> & Partial<AuditLog>;
+        Insert: Pick<AuditLog, "action" | "entity_type" | "entity_id"> &
+          Partial<AuditLog>;
         Update: never; // Imutável
         Relationships: [];
       };
       event_settings: {
         Row: EventSetting;
-        Insert: Partial<EventSetting> & Pick<EventSetting, "conference_id" | "setting_key" | "setting_value">;
+        Insert: Partial<EventSetting> &
+          Pick<EventSetting, "conference_id" | "setting_key" | "setting_value">;
         Update: Partial<EventSetting>;
         Relationships: [];
       };
@@ -253,13 +275,15 @@ export type Database = {
           p_full_name: string;
           p_sex: string;
           p_phone: string;
-          p_local_church: string;
-          p_ecclesiastical_district: string;
-          p_municipality: string;
-          p_organizational_role: string;
-          p_participant_category: string;
-          p_delegation_responsible: string | null;
-          p_organization_id: string | null;
+          p_email?: string | null;
+          p_local_church?: string | null;
+          p_ecclesiastical_district?: string | null;
+          p_municipality?: string | null;
+          p_organizational_role?: string | null;
+          p_custom_role?: string | null;
+          p_participant_category?: string | null;
+          p_delegation_responsible?: string | null;
+          p_organization_id?: string | null;
         };
         Returns: Json;
       };

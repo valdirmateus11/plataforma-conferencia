@@ -1,18 +1,45 @@
 import { z } from "zod";
+import {
+  LUANDA_MUNICIPALITIES,
+  INTENDENCIAS,
+  CARGOS_PASTORAIS,
+  PARTICIPANT_CATEGORIES,
+  ORGANIZATIONAL_ROLES,
+  isValidCargoParaIntendencia,
+  type Intendencia,
+} from "@/lib/constants/conference-data";
+
+// Re-exporta as constantes para retrocompatibilidade com componentes que importam daqui
+export {
+  LUANDA_MUNICIPALITIES,
+  PARTICIPANT_CATEGORIES,
+  ORGANIZATIONAL_ROLES,
+} from "@/lib/constants/conference-data";
+
+// Exporta INTENDENCIAS como PROVISIONAL_DISTRICTS para retrocompatibilidade
+export { INTENDENCIAS as PROVISIONAL_DISTRICTS } from "@/lib/constants/conference-data";
+
+export { CARGOS_PASTORAIS } from "@/lib/constants/conference-data";
 
 export const publicRegistrationSchema = z
   .object({
     idempotencyKey: z.string().uuid({
       message: "Chave de submissão inválida.",
     }),
+
+    // -----------------------------------------------------------------------
+    // Dados Pessoais
+    // -----------------------------------------------------------------------
     fullName: z
       .string()
       .min(3, { message: "O nome completo deve ter pelo menos 3 caracteres." })
       .max(120, { message: "O nome completo não pode exceder 120 caracteres." })
       .transform((val) => val.trim()),
+
     sex: z.enum(["Masculino", "Feminino"], {
       errorMap: () => ({ message: "Selecione o sexo." }),
     }),
+
     phone: z
       .string()
       .min(9, { message: "O telefone deve ter pelo menos 9 dígitos." })
@@ -20,108 +47,131 @@ export const publicRegistrationSchema = z
       .transform((val) => val.trim().replace(/\s+/g, ""))
       .refine(
         (val) => {
-          // Remove prefixos para validação do núcleo do número angolano
           const clean = val.replace(/\D/g, "");
-          return clean.length === 9 || (clean.length === 12 && clean.startsWith("2449"));
+          return (
+            clean.length === 9 ||
+            (clean.length === 12 && clean.startsWith("2449"))
+          );
         },
         {
           message:
             "Introduza um número de telefone válido (ex.: 9XXXXXXXX ou +244 9XXXXXXXX).",
         }
       ),
-    ecclesiasticalDistrict: z
+
+    email: z
       .string()
-      .min(2, { message: "Selecione o distrito eclesiástico." })
-      .max(100, { message: "Distrito inválido." })
-      .transform((val) => val.trim()),
+      .min(1, { message: "O endereço de e-mail é obrigatório." })
+      .email({ message: "Introduza um endereço de e-mail válido (ex.: nome@dominio.com)." })
+      .max(254, { message: "O endereço de e-mail é demasiado longo." })
+      .transform((val) => val.trim().toLowerCase()),
+
+    // -----------------------------------------------------------------------
+    // Dados Eclesiásticos
+    // -----------------------------------------------------------------------
     municipality: z
       .string()
-      .min(2, { message: "Selecione o município." })
-      .max(100, { message: "Município inválido." })
-      .transform((val) => val.trim()),
+      .refine((val) => (LUANDA_MUNICIPALITIES as readonly string[]).includes(val), {
+        message: "Selecione um município válido da lista.",
+      }),
+
+    ecclesiasticalDistrict: z
+      .string()
+      .refine((val) => (INTENDENCIAS as readonly string[]).includes(val), {
+        message: "Selecione uma Intendência válida da lista.",
+      }),
+
     localChurch: z
       .string()
-      .min(2, { message: "Indique o nome da igreja local / congregação." })
-      .max(120, { message: "Nome da igreja demasiado longo (máx. 120 caracteres)." })
-      .transform((val) => val.trim()),
+      .min(1, { message: "Selecione o Cargo Pastoral." }),
+
+    // -----------------------------------------------------------------------
+    // Função e Participação
+    // -----------------------------------------------------------------------
     organizationalRole: z
       .string()
-      .min(2, { message: "Selecione ou indique a sua função na organização." })
-      .max(80, { message: "Função demasiado longa." })
-      .transform((val) => val.trim()),
-    participantCategory: z
+      .refine(
+        (val) => (ORGANIZATIONAL_ROLES as readonly string[]).includes(val),
+        { message: "Selecione uma função válida da lista." }
+      ),
+
+    customRole: z
       .string()
-      .min(2, { message: "Selecione a categoria de participação." })
-      .max(60, { message: "Categoria inválida." })
-      .transform((val) => val.trim()),
-    delegationResponsible: z
-      .string()
-      .max(120, { message: "O nome do responsável não pode exceder 120 caracteres." })
+      .max(80, { message: "A especificação da função não pode exceder 80 caracteres." })
       .optional()
       .nullable()
       .transform((val) => (val ? val.trim() : null)),
-    // Campo Honeypot para neutralização de bots sem atrito
-    website_url: z.string().max(0, { message: "Submissão rejeitada." }).optional(),
-    // Timestamp para proteção contra preenchimento instantâneo por bots
+
+    participantCategory: z
+      .string()
+      .refine(
+        (val) => (PARTICIPANT_CATEGORIES as readonly string[]).includes(val),
+        { message: "Selecione uma categoria de participação válida." }
+      ),
+
+    delegationResponsible: z
+      .string()
+      .max(120, {
+        message: "O nome do responsável não pode exceder 120 caracteres.",
+      })
+      .optional()
+      .nullable()
+      .transform((val) => (val ? val.trim() : null)),
+
+    // -----------------------------------------------------------------------
+    // Campos de segurança (anti-bot)
+    // -----------------------------------------------------------------------
+    website_url: z
+      .string()
+      .max(0, { message: "Submissão rejeitada." })
+      .optional(),
+
     formLoadedAt: z.number().optional(),
   })
+  // Validação cruzada: Cargo Pastoral deve pertencer à Intendência seleccionada
+  .superRefine((data, ctx) => {
+    if (
+      data.ecclesiasticalDistrict &&
+      data.localChurch &&
+      !isValidCargoParaIntendencia(data.ecclesiasticalDistrict, data.localChurch)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "O Cargo Pastoral seleccionado não pertence à Intendência escolhida.",
+        path: ["localChurch"],
+      });
+    }
+  })
+  // Validação cruzada: customRole obrigatório quando função = "Outro"
+  .superRefine((data, ctx) => {
+    if (
+      data.organizationalRole === "Outro" &&
+      (!data.customRole || data.customRole.trim().length < 2)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Por favor, especifique a sua função (mínimo 2 caracteres).",
+        path: ["customRole"],
+      });
+    }
+  })
+  // Validação cruzada: Responsável da Delegação obrigatório para Delegados
   .refine(
     (data) => {
-      // Se for delegado, o responsável de delegação é obrigatório se definido pela organização
-      if (data.participantCategory === "Delegado" && !data.delegationResponsible) {
+      if (
+        data.participantCategory === "Delegado" &&
+        !data.delegationResponsible
+      ) {
         return false;
       }
       return true;
     },
     {
-      message: "Para a categoria 'Delegado', é obrigatório indicar o Responsável da Delegação.",
+      message:
+        "Para a categoria 'Delegado', é obrigatório indicar o Responsável da Delegação.",
       path: ["delegationResponsible"],
     }
   );
 
 export type PublicRegistrationInput = z.infer<typeof publicRegistrationSchema>;
-
-/**
- * Listas Provisórias Homologadas (Fase 0/3)
- * Até que a organização confirme a lista oficial do ANEXO B,
- * estas opções são utilizadas na interface identificadas como provisórias.
- */
-export const PROVISIONAL_DISTRICTS = [
-  "Distrito Central de Luanda [Provisório]",
-  "Distrito Norte de Luanda [Provisório]",
-  "Distrito Sul de Luanda [Provisório]",
-  "Distrito Leste de Luanda [Provisório]",
-  "Distrito Eclesiástico de Belas [Provisório]",
-  "Distrito Eclesiástico de Viana [Provisório]",
-  "Distrito Eclesiástico de Cacuaco [Provisório]",
-  "Outro Distrito Eclesiástico [Provisório]",
-];
-
-export const LUANDA_MUNICIPALITIES = [
-  "Luanda",
-  "Cazenga",
-  "Viana",
-  "Cacuaco",
-  "Kilamba Kiaxi",
-  "Talatona",
-  "Belas",
-  "Icolo e Bengo",
-  "Quiçama",
-];
-
-export const PARTICIPANT_CATEGORIES = [
-  "Delegado",
-  "Convidado",
-  "Equipa de Apoio",
-  "Participante Geral",
-];
-
-export const ORGANIZATIONAL_ROLES = [
-  "Líder da Juventude",
-  "Vice-Líder da Juventude",
-  "Secretário(a) da Juventude",
-  "Coordenador(a) de Departamento",
-  "Membro da Direção",
-  "Membro do Grupo de Jovens",
-  "Outro",
-];

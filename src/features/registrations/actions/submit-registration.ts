@@ -25,7 +25,6 @@ export async function submitRegistration(
 ): Promise<SubmitRegistrationResult> {
   // 1. Defesa Honeypot contra robôs de spam
   if (rawInput.website_url && rawInput.website_url.trim().length > 0) {
-    // Simula sucesso para despistar o bot sem efetuar registo
     return {
       success: true,
       registrationCode: "CDJ26-BOT-OK",
@@ -38,18 +37,19 @@ export async function submitRegistration(
   if (rawInput.formLoadedAt && Date.now() - rawInput.formLoadedAt < 1800) {
     return {
       success: false,
-      error: "O formulário foi submetido com demasiada rapidez. Por favor, reveja os dados e tente novamente.",
+      error:
+        "O formulário foi submetido com demasiada rapidez. Por favor, reveja os dados e tente novamente.",
     };
   }
 
-  // 3. Validação rigorosa no servidor com Zod
+  // 3. Validação rigorosa no servidor com Zod (incluindo cruzamento Intendência↔Cargo Pastoral)
   const validation = publicRegistrationSchema.safeParse(rawInput);
   if (!validation.success) {
     const flatErrors = validation.error.flatten().fieldErrors;
     return {
       success: false,
       error: "Existem campos obrigatórios em falta ou com formato inválido.",
-      fieldErrors: flatErrors,
+      fieldErrors: flatErrors as Record<string, string[]>,
     };
   }
 
@@ -68,18 +68,20 @@ export async function submitRegistration(
     if (confError || !conference) {
       return {
         success: false,
-        error: "A conferência selecionada não foi encontrada ou não está configurada.",
+        error:
+          "A conferência selecionada não foi encontrada ou não está configurada.",
       };
     }
 
     if (!conference.registration_open) {
       return {
         success: false,
-        error: "As inscrições para esta edição da Conferência encontram-se temporariamente encerradas.",
+        error:
+          "As inscrições para esta edição da Conferência encontram-se temporariamente encerradas.",
       };
     }
 
-    // 5. Chamada à Stored Procedure atómica com bloqueio FOR UPDATE (impede race conditions)
+    // 5. Chamada à Stored Procedure atómica actualizada (com email e custom_role)
     const { data: rpcResult, error: rpcError } = await supabase.rpc(
       "submit_public_registration",
       {
@@ -88,10 +90,12 @@ export async function submitRegistration(
         p_full_name: data.fullName,
         p_sex: data.sex,
         p_phone: data.phone,
+        p_email: data.email,
         p_local_church: data.localChurch,
         p_ecclesiastical_district: data.ecclesiasticalDistrict,
         p_municipality: data.municipality,
         p_organizational_role: data.organizationalRole,
+        p_custom_role: data.organizationalRole === "Outro" ? data.customRole ?? null : null,
         p_participant_category: data.participantCategory,
         p_delegation_responsible: data.delegationResponsible ?? null,
         p_organization_id: null,
@@ -99,14 +103,21 @@ export async function submitRegistration(
     );
 
     if (rpcError) {
-      if (rpcError.message.includes("CAPACITY_REACHED") || rpcError.code === "P0004") {
+      if (
+        rpcError.message.includes("CAPACITY_REACHED") ||
+        rpcError.code === "P0004"
+      ) {
         return {
           success: false,
-          error: "A capacidade limite de 500 participantes para esta Conferência foi atingida. As novas inscrições estão bloqueadas.",
+          error:
+            "A capacidade limite de 500 participantes para esta Conferência foi atingida. As novas inscrições estão bloqueadas.",
         };
       }
 
-      if (rpcError.message.includes("REGISTRATIONS_CLOSED") || rpcError.code === "P0003") {
+      if (
+        rpcError.message.includes("REGISTRATIONS_CLOSED") ||
+        rpcError.code === "P0003"
+      ) {
         return {
           success: false,
           error: "As inscrições para esta Conferência foram encerradas.",

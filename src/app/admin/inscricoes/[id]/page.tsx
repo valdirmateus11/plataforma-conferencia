@@ -159,6 +159,15 @@ export default async function RegistrationDetailPage({ params }: Props) {
                 {registration.phone}
               </p>
             </div>
+
+            {registration.email && (
+              <div>
+                <span className="text-slate-400">E-mail:</span>
+                <p className="font-semibold text-slate-900 mt-0.5 break-all">
+                  {registration.email}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -171,19 +180,19 @@ export default async function RegistrationDetailPage({ params }: Props) {
 
           <div className="space-y-3 text-xs">
             <div>
-              <span className="text-slate-400">Igreja Local / Congregação:</span>
+              <span className="text-slate-400">Cargo Pastoral:</span>
               <p className="font-semibold text-slate-900 mt-0.5">{registration.local_church}</p>
             </div>
 
             <div>
-              <span className="text-slate-400">Distrito Eclesiástico:</span>
+              <span className="text-slate-400">Intendência:</span>
               <p className="font-semibold text-slate-900 mt-0.5">
                 {registration.ecclesiastical_district}
               </p>
             </div>
 
             <div>
-              <span className="text-slate-400">Município:</span>
+              <span className="text-slate-400">Município de Residência:</span>
               <p className="font-semibold text-slate-900 mt-0.5 flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-slate-400" />
                 {registration.municipality}
@@ -211,6 +220,11 @@ export default async function RegistrationDetailPage({ params }: Props) {
               <span className="text-slate-400">Função na Organização:</span>
               <p className="font-semibold text-slate-900 mt-0.5">
                 {registration.organizational_role}
+                {registration.custom_role && (
+                  <span className="ml-1 text-slate-500 font-normal">
+                    ({registration.custom_role})
+                  </span>
+                )}
               </p>
             </div>
 

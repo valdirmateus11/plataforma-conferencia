@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import {
   publicRegistrationSchema,
   type PublicRegistrationInput,
@@ -27,7 +28,7 @@ export async function submitRegistration(
   if (rawInput.website_url && rawInput.website_url.trim().length > 0) {
     return {
       success: true,
-      registrationCode: "CDJ26-BOT-OK",
+      registrationCode: `${CONFERENCE_CONFIG.codePrefix}-BOT-OK`,
       fullName: rawInput.fullName || "Participante",
       submittedAt: new Date().toISOString(),
     };
@@ -62,7 +63,7 @@ export async function submitRegistration(
     const { data: conference, error: confError } = await supabase
       .from("conferences")
       .select("*")
-      .eq("slug", "iii-conferencia-distrital-luanda-2026")
+      .eq("slug", CONFERENCE_CONFIG.slug)
       .maybeSingle();
 
     if (confError || !conference) {

@@ -44,24 +44,27 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* 1. Exportação de Inscrições com Filtros */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-          <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-300/80 p-6 shadow-sm space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <FileSpreadsheet className="w-5 h-5 text-emerald-600 shrink-0" aria-hidden="true" />
           <div>
             <h3 className="text-sm font-bold text-slate-900">Exportar Inscrições (CSV / Excel)</h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-600">
               Descarregue a base de delegados com filtros personalizados e blindagem contra injeção de fórmulas.
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Estado</label>
+            <label htmlFor="export-status" className="block font-semibold text-slate-700 mb-1">
+              Estado
+            </label>
             <select
+              id="export-status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Todos os Estados</option>
               <option value="approved">Apenas Aprovadas</option>
@@ -72,11 +75,14 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Intendência</label>
+            <label htmlFor="export-district" className="block font-semibold text-slate-700 mb-1">
+              Intendência
+            </label>
             <select
+              id="export-district"
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Todas as Intendências</option>
               {INTENDENCIAS.map((d) => (
@@ -88,11 +94,14 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Município</label>
+            <label htmlFor="export-municipality" className="block font-semibold text-slate-700 mb-1">
+              Município
+            </label>
             <select
+              id="export-municipality"
               value={municipality}
               onChange={(e) => setMunicipality(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Todos os Municípios</option>
               {LUANDA_MUNICIPALITIES.map((m) => (
@@ -104,11 +113,14 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Categoria</label>
+            <label htmlFor="export-category" className="block font-semibold text-slate-700 mb-1">
+              Categoria
+            </label>
             <select
+              id="export-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
             >
               <option value="all">Todas as Categorias</option>
               {PARTICIPANT_CATEGORIES.map((c) => (
@@ -121,51 +133,56 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
         </div>
 
         <button
+          type="button"
           onClick={handleExportRegistrations}
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-4 h-4" aria-hidden="true" />
           Descarregar CSV de Inscrições Filtradas
         </button>
       </div>
 
       {/* 2. Exportação de Presenças por Sessão */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-          <FileSpreadsheet className="w-5 h-5 text-blue-600" />
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">Exportar Presenças por Sessão</h3>
-            <p className="text-xs text-slate-500">
-              Descarregue os registos nominais de assiduidade por plenária para consolidação de quórum.
-            </p>
+      <div className="bg-[#F1F5F9] rounded-2xl border border-slate-300/80 p-6 shadow-sm space-y-4 flex flex-col justify-between">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+            <FileSpreadsheet className="w-5 h-5 text-blue-600 shrink-0" aria-hidden="true" />
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">Exportar Presenças por Sessão</h3>
+              <p className="text-xs text-slate-600">
+                Descarregue os registos nominais de assiduidade por plenária para consolidação de quórum.
+              </p>
+            </div>
+          </div>
+
+          <div className="text-xs space-y-2">
+            <label htmlFor="export-session" className="block font-semibold text-slate-700">
+              Selecione a Sessão Plenária
+            </label>
+            <select
+              id="export-session"
+              value={selectedSession}
+              onChange={(e) => setSelectedSession(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">Todas as Sessões (Visão Consolidada)</option>
+              {sessions.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        <div className="text-xs space-y-2">
-          <label className="block font-semibold text-slate-700">Selecione a Sessão Plenária</label>
-          <select
-            value={selectedSession}
-            onChange={(e) => setSelectedSession(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 p-2.5 text-xs bg-white focus:border-blue-500 focus:outline-none"
-          >
-            <option value="all">Todas as Sessões (Visão Consolidada)</option>
-            {sessions.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="pt-8">
-          <button
-            onClick={handleExportAttendance}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
-          >
-            <Download className="w-4 h-4" />
-            Descarregar CSV de Presenças
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleExportAttendance}
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
+        >
+          <Download className="w-4 h-4" aria-hidden="true" />
+          Descarregar CSV de Presenças
+        </button>
       </div>
     </div>
   );

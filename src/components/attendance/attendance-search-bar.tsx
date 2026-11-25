@@ -2,7 +2,15 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Search, X, Loader2, Filter } from "lucide-react";
+import {
+  Search,
+  X,
+  Loader2,
+  Filter,
+  CheckCircle2,
+  MinusCircle,
+} from "lucide-react";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 
 interface AttendanceSearchBarProps {
   currentQuery: string;
@@ -45,20 +53,21 @@ export function AttendanceSearchBar({ currentQuery, currentFilter }: AttendanceS
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="relative flex items-center">
-        <div className="absolute left-4 text-slate-400">
+      <form onSubmit={handleSubmit} className="relative flex items-center" role="search">
+        <div className="absolute left-4 text-slate-400 pointer-events-none">
           {isPending ? (
-            <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600" aria-hidden="true" />
           ) : (
-            <Search className="w-5 h-5" />
+            <Search className="w-5 h-5" aria-hidden="true" />
           )}
         </div>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Pesquisar por Código (CDJ26-XXXXX), Nome Completo ou Telefone..."
-          className="w-full pl-12 pr-28 py-3.5 bg-white border border-slate-300 rounded-2xl text-xs sm:text-sm font-medium focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none shadow-sm transition"
+          aria-label="Pesquisar credenciado por código, nome ou telefone"
+          placeholder={`Pesquisar por Código (${CONFERENCE_CONFIG.codePrefix}-XXXXX), Nome Completo ou Telefone...`}
+          className="w-full pl-12 pr-32 py-3.5 bg-[#F1F5F9] border border-slate-300 rounded-2xl text-xs sm:text-sm font-medium focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none shadow-sm transition"
         />
 
         <div className="absolute right-2 flex items-center gap-1">
@@ -69,8 +78,8 @@ export function AttendanceSearchBar({ currentQuery, currentFilter }: AttendanceS
                 setSearchTerm("");
                 handleSearch("", currentFilter);
               }}
-              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"
-              title="Limpar pesquisa"
+              aria-label="Limpar pesquisa"
+              className="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/70 transition"
             >
               <X className="w-4 h-4" />
             </button>
@@ -87,19 +96,24 @@ export function AttendanceSearchBar({ currentQuery, currentFilter }: AttendanceS
       </form>
 
       {/* Abas de Filtro da Sessão */}
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="text-slate-400 font-medium flex items-center gap-1 text-[11px] mr-1">
-          <Filter className="w-3.5 h-3.5" />
+      <div
+        className="flex flex-wrap items-center gap-2 text-xs"
+        role="group"
+        aria-label="Filtrar por estado de presença"
+      >
+        <span className="text-slate-500 font-medium flex items-center gap-1 text-xs mr-1">
+          <Filter className="w-3.5 h-3.5" aria-hidden="true" />
           Filtro:
         </span>
 
         <button
           type="button"
           onClick={() => handleFilterClick("all")}
+          aria-pressed={currentFilter === "all"}
           className={`px-3 py-1.5 rounded-xl font-semibold transition ${
             currentFilter === "all"
               ? "bg-slate-900 text-white shadow-sm"
-              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              : "bg-[#F1F5F9] border border-slate-300 text-slate-700 hover:bg-slate-200/70"
           }`}
         >
           Todos os Credenciados
@@ -108,27 +122,29 @@ export function AttendanceSearchBar({ currentQuery, currentFilter }: AttendanceS
         <button
           type="button"
           onClick={() => handleFilterClick("present")}
-          className={`px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 ${
+          aria-pressed={currentFilter === "present"}
+          className={`px-3 py-1.5 rounded-xl font-semibold transition inline-flex items-center gap-1.5 ${
             currentFilter === "present"
               ? "bg-emerald-600 text-white shadow-sm"
-              : "bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+              : "bg-[#F1F5F9] border border-emerald-300 text-emerald-800 hover:bg-emerald-50"
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
-          🟢 Presentes nesta Sessão
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          Presentes nesta Sessão
         </button>
 
         <button
           type="button"
           onClick={() => handleFilterClick("absent")}
-          className={`px-3 py-1.5 rounded-xl font-semibold transition flex items-center gap-1.5 ${
+          aria-pressed={currentFilter === "absent"}
+          className={`px-3 py-1.5 rounded-xl font-semibold transition inline-flex items-center gap-1.5 ${
             currentFilter === "absent"
-              ? "bg-slate-600 text-white shadow-sm"
-              : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              ? "bg-slate-700 text-white shadow-sm"
+              : "bg-[#F1F5F9] border border-slate-300 text-slate-700 hover:bg-slate-200/70"
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-slate-400" />
-          ⚪ Ausentes nesta Sessão
+          <MinusCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          Ausentes nesta Sessão
         </button>
       </div>
     </div>

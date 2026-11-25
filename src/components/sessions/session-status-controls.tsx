@@ -1,7 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
-import { Play, Lock, RotateCcw, Ban, Loader2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Play, Lock, RotateCcw, Ban, Loader2, AlertCircle } from "lucide-react";
 import { updateSessionStatus } from "@/features/sessions/actions/session-actions";
 import type { SessionStatus } from "@/types/database.types";
 
@@ -19,6 +19,7 @@ export function SessionStatusControls({
   isSuperAdmin,
 }: SessionStatusControlsProps) {
   const [isPending, startTransition] = useTransition();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   function handleStatusChange(newStatus: SessionStatus) {
     let confirmMsg = `Deseja alterar a sessão "${sessionName}" para ${newStatus}?`;
@@ -32,64 +33,78 @@ export function SessionStatusControls({
 
     if (!confirm(confirmMsg)) return;
 
+    setErrorMessage(null);
     startTransition(async () => {
       const res = await updateSessionStatus(sessionId, newStatus);
       if (res.error) {
-        alert(res.error);
+        setErrorMessage(res.error);
       }
     });
   }
 
   if (isPending) {
     return (
-      <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-        <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+      <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+        <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" aria-hidden="true" />
         <span>Atualizando...</span>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {status === "planned" && (
-        <button
-          onClick={() => handleStatusChange("open")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
-        >
-          <Play className="w-3.5 h-3.5 fill-current" />
-          Abrir Sessão
-        </button>
-      )}
+    <div className="flex flex-col items-end gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
+        {status === "planned" && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange("open")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
+          >
+            <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
+            Abrir Sessão
+          </button>
+        )}
 
-      {status === "open" && (
-        <button
-          onClick={() => handleStatusChange("closed")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
-        >
-          <Lock className="w-3.5 h-3.5" />
-          Encerrar Sessão
-        </button>
-      )}
+        {status === "open" && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange("closed")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
+          >
+            <Lock className="w-3.5 h-3.5" aria-hidden="true" />
+            Encerrar Sessão
+          </button>
+        )}
 
-      {status === "closed" && (
-        <button
-          onClick={() => handleStatusChange("open")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-blue-200 text-blue-700 hover:bg-blue-50 rounded-xl text-xs font-semibold transition"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Reabrir Sessão
-        </button>
-      )}
+        {status === "closed" && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange("open")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-blue-300 bg-[#F1F5F9] text-blue-700 hover:bg-blue-50 rounded-xl text-xs font-semibold transition"
+          >
+            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+            Reabrir Sessão
+          </button>
+        )}
 
-      {status !== "cancelled" && isSuperAdmin && (
-        <button
-          onClick={() => handleStatusChange("cancelled")}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-slate-400 hover:text-rose-600 text-[11px] font-medium transition"
-          title="Cancelar Sessão"
-        >
-          <Ban className="w-3 h-3" />
-          Cancelar
-        </button>
+        {status !== "cancelled" && isSuperAdmin && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange("cancelled")}
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-slate-500 hover:text-rose-600 text-xs font-medium transition"
+            title="Cancelar Sessão"
+          >
+            <Ban className="w-3.5 h-3.5" aria-hidden="true" />
+            Cancelar
+          </button>
+        )}
+      </div>
+
+      {errorMessage && (
+        <span className="text-xs text-rose-600 font-medium flex items-center gap-1">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          {errorMessage}
+        </span>
       )}
     </div>
   );

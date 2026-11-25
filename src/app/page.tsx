@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { RegistrationForm } from "@/components/forms/registration-form";
 import { ConferenceLogo } from "@/components/ui/conference-logo";
 import { FlyerPreviewCard } from "@/components/ui/flyer-preview-card";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import {
   Calendar,
   MapPin,
@@ -21,7 +22,7 @@ export default async function HomePage() {
   const { data: conference } = await supabase
     .from("conferences")
     .select("*")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .maybeSingle();
 
   // 2. Verificação no servidor da contagem de vagas ocupadas
@@ -36,7 +37,7 @@ export default async function HomePage() {
     activeRegistrationsCount = count || 0;
   }
 
-  const capacity = conference?.capacity || 500;
+  const capacity = conference?.capacity || CONFERENCE_CONFIG.capacity;
   const remainingSpots = Math.max(0, capacity - activeRegistrationsCount);
   const isCapacityReached = activeRegistrationsCount >= capacity;
   const isRegistrationOpen = conference?.registration_open ?? true;
@@ -93,35 +94,35 @@ export default async function HomePage() {
                   Tema Central do Evento
                 </p>
                 <blockquote className="text-base sm:text-xl font-extrabold text-slate-900 leading-snug tracking-tight">
-                  &ldquo;Avivados e Santificados em Cristo, Sejamos a Carta para o Mundo&rdquo;
+                  &ldquo;{CONFERENCE_CONFIG.theme}&rdquo;
                 </blockquote>
                 <p className="text-xs text-emerald-800 font-bold">
-                  — (Actos 2:42-47, I Coríntios 3:2-3)
+                  — ({CONFERENCE_CONFIG.themeRef})
                 </p>
               </div>
 
               {/* Informações de Local e Data (Ícones Limpos sem Fundo) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#F1F5F9] border border-slate-300/80 shadow-xs text-left">
-                  <Calendar className="w-6 h-6 text-orange-600 shrink-0" />
+                  <Calendar className="w-6 h-6 text-orange-600 shrink-0" aria-hidden="true" />
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
                       Data Oficial
                     </p>
                     <p className="text-xs sm:text-sm font-extrabold text-slate-900">
-                      21 a 24 de Janeiro de 2027
+                      {CONFERENCE_CONFIG.dateRange}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#F1F5F9] border border-slate-300/80 shadow-xs text-left">
-                  <MapPin className="w-6 h-6 text-emerald-700 shrink-0" />
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <MapPin className="w-6 h-6 text-emerald-700 shrink-0" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
                       Local do Evento
                     </p>
                     <p className="text-xs sm:text-sm font-extrabold text-slate-900 truncate">
-                      Cargo Pastoral Monte Sinai
+                      {CONFERENCE_CONFIG.venue}
                     </p>
                   </div>
                 </div>
@@ -234,9 +235,9 @@ export default async function HomePage() {
 
             <Link
               href="/admin/login"
-              className="text-slate-400 hover:text-emerald-400 transition-colors text-[11px] font-medium flex items-center gap-1.5"
+              className="text-slate-300 hover:text-emerald-400 transition-colors text-xs font-medium flex items-center gap-1.5"
             >
-              <Lock className="w-3.5 h-3.5" />
+              <Lock className="w-3.5 h-3.5" aria-hidden="true" />
               Painel Administrativo da Organização
             </Link>
           </div>

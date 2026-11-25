@@ -4,14 +4,51 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import { generateCsvContent } from "@/lib/export/sanitize";
 import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import { CONFERENCE_CONFIG } from "@/lib/config";
+import { checkExportRateLimit } from "@/lib/security/rate-limit";
 import type { Registration, RegistrationStatus } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
+
+const ALLOWED_EXPORT_ROLES = new Set([
+  "super_admin",
+  "registration_admin",
+  "consultant",
+]);
 
 export async function GET(request: NextRequest) {
   const currentAdmin = await getCurrentAdmin();
   if (!currentAdmin) {
     return new NextResponse("Não autorizado.", { status: 401 });
+  }
+
+  const hasPermission =
+    currentAdmin.isSuperAdmin ||
+    currentAdmin.roles.some((role) => ALLOWED_EXPORT_ROLES.has(role));
+
+  if (!hasPermission) {
+    return new NextResponse(
+      "Acesso negado: apenas Coordenação, Consultores e Superadministrador podem exportar inscrições.",
+      { status: 403 }
+    );
+  }
+
+  const adminClient = createAdminClient();
+
+  // Rate limiting persistente por utilizador via audit_logs
+  const rateLimit = await checkExportRateLimit(
+    adminClient,
+    currentAdmin.id,
+    "EXPORT_REGISTRATIONS_CSV"
+  );
+  if (!rateLimit.allowed) {
+    return new NextResponse(rateLimit.error || "Muitas exportações em curto período.", {
+      status: 429,
+      headers: {
+        "Retry-After": String(rateLimit.retryAfterSeconds),
+        "Cache-Control": "no-store",
+      },
+    });
   }
 
   const { searchParams } = new URL(request.url);
@@ -21,13 +58,12 @@ export async function GET(request: NextRequest) {
   const categoryFilter = searchParams.get("category") || "all";
 
   const supabase = await createClient();
-  const adminClient = createAdminClient();
 
   // 1. Obter conferência ativa
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {
@@ -135,7 +171,7 @@ export async function GET(request: NextRequest) {
   });
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const filename = `inscricoes_cdj2026_${timestamp}.csv`;
+  const filename = `inscricoes_cdj2027_${timestamp}.csv`;
 
   return new NextResponse(csvContent, {
     status: 200,

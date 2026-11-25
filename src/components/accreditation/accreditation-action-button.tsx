@@ -99,7 +99,7 @@ export function AccreditationActionButton({
         </div>
 
         {operatorName && (
-          <span className="text-[10px] text-slate-400 font-medium">
+          <span className="text-xs text-slate-500 font-medium">
             Operador: {operatorName}
           </span>
         )}
@@ -107,24 +107,32 @@ export function AccreditationActionButton({
         {isSuperAdmin && (
           <>
             <button
+              type="button"
               onClick={() => setIsRevokeModalOpen(true)}
-              className="text-[10px] text-rose-500 hover:text-rose-700 underline font-medium mt-0.5"
+              className="text-xs text-rose-600 hover:text-rose-800 underline font-medium mt-0.5"
             >
               Revogar Credenciamento
             </button>
 
             {/* Modal de Revogação Exclusivo de Superadmin */}
             {isRevokeModalOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-                <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-rose-200">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Revogar Credenciamento"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+              >
+                <div className="bg-[#F1F5F9] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-rose-200 text-left">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div className="flex items-center gap-2 text-rose-600 font-bold text-sm">
-                      <ShieldAlert className="w-5 h-5" />
+                      <ShieldAlert className="w-5 h-5" aria-hidden="true" />
                       Revogar Credenciamento
                     </div>
                     <button
+                      type="button"
                       onClick={() => setIsRevokeModalOpen(false)}
-                      className="text-slate-400 hover:text-slate-600 p-1"
+                      aria-label="Fechar janela"
+                      className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-200/70"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -220,42 +228,50 @@ export function AccreditationActionButton({
 
       {/* Modal de Confirmação Rápida no Secretariado */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-emerald-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirmar Credenciamento Presencial"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+        >
+          <div className="bg-[#F1F5F9] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-emerald-200 text-left">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
-                <UserCheck className="w-5 h-5 text-emerald-600" />
+                <UserCheck className="w-5 h-5 text-emerald-600" aria-hidden="true" />
                 Secretariado de Credenciamento
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                aria-label="Fechar janela"
+                className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-200/70"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1 text-xs">
-              <div className="text-slate-500 text-[11px]">Participante Confirmado:</div>
+            <div className="bg-slate-200/50 p-3.5 rounded-xl border border-slate-300/80 space-y-1 text-xs">
+              <div className="text-slate-600 text-xs">Participante Confirmado:</div>
               <div className="text-sm font-bold text-slate-900">{participantName}</div>
               <div className="font-mono text-emerald-700 font-semibold">{registrationCode}</div>
             </div>
 
             <p className="text-xs text-slate-600">
               Confirme que o participante se encontra presente fisicamente e que o material oficial da
-              III Sessão Bienal (crachá e pasta) foi entregue.
+              IIIª Sessão Bienal (crachá e pasta) foi entregue.
             </p>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor={`acc-notes-${registrationId}`} className="block text-xs font-semibold text-slate-700 mb-1">
                 Observações de Secretariado (Opcional)
               </label>
               <input
+                id={`acc-notes-${registrationId}`}
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Ex.: Crachá nº 140 entregue com pasta e material de apoio"
-                className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] p-2.5 text-xs focus:border-emerald-500 focus:outline-none"
               />
             </div>
 

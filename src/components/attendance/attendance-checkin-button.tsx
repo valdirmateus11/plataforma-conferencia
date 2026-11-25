@@ -75,24 +75,32 @@ export function AttendanceCheckinButton({
         {isSuperAdmin && (
           <>
             <button
+              type="button"
               onClick={() => setIsVoidModalOpen(true)}
-              className="text-[10px] text-rose-500 hover:text-rose-700 underline font-medium"
+              className="text-xs text-rose-600 hover:text-rose-800 underline font-medium"
             >
               Anular Presença
             </button>
 
             {/* Modal de Anulação Exclusivo de Superadmin */}
             {isVoidModalOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-                <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-rose-200 text-left">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Anular Registo de Presença"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+              >
+                <div className="bg-[#F1F5F9] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-rose-200 text-left">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div className="flex items-center gap-2 text-rose-600 font-bold text-sm">
-                      <ShieldAlert className="w-5 h-5" />
+                      <ShieldAlert className="w-5 h-5" aria-hidden="true" />
                       Anular Registo de Presença
                     </div>
                     <button
+                      type="button"
                       onClick={() => setIsVoidModalOpen(false)}
-                      className="text-slate-400 hover:text-slate-600 p-1"
+                      aria-label="Fechar janela"
+                      className="text-slate-500 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-200/70"
                     >
                       <X className="w-4 h-4" />
                     </button>

@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import type { RegistrationStatus } from "@/types/database.types";
 
 export type AdminStatusChangeResult =
@@ -16,6 +18,19 @@ export async function updateRegistrationStatus(
   newStatus: RegistrationStatus,
   reason: string = ""
 ): Promise<AdminStatusChangeResult> {
+  const currentAdmin = await getCurrentAdmin();
+  if (
+    !currentAdmin ||
+    (!currentAdmin.isSuperAdmin &&
+      !currentAdmin.roles.includes("registration_admin") &&
+      !currentAdmin.roles.includes("validator"))
+  ) {
+    return {
+      success: false,
+      error: "Não tem permissões suficientes para alterar o estado desta inscrição.",
+    };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.rpc("change_registration_status", {
@@ -29,7 +44,7 @@ export async function updateRegistrationStatus(
       return {
         success: false,
         error:
-          "Não é possível reativar esta inscrição pois a capacidade limite de 500 participantes foi atingida. Para reativar, aumente a capacidade da conferência nas configurações ou aguarde a libertação de uma vaga.",
+          `Não é possível reativar esta inscrição pois a capacidade limite de ${CONFERENCE_CONFIG.capacity} participantes foi atingida. Para reativar, aumente a capacidade da conferência nas configurações ou aguarde a libertação de uma vaga.`,
       };
     }
 

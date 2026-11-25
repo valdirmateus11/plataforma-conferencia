@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { ConferenceLogo } from "@/components/ui/conference-logo";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -22,7 +23,7 @@ function SuccessContent() {
 
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem("cdj26_registration_success");
+      const stored = sessionStorage.getItem(CONFERENCE_CONFIG.successStorageKey);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.code) setRegistrationCode(parsed.code);
@@ -67,9 +68,9 @@ function SuccessContent() {
       <p className="text-slate-600 text-sm leading-relaxed mb-6">
         A sua participação na{" "}
         <strong className="text-emerald-950 font-bold">
-          III Sessão Bienal da Conferência Distrital da Juventude de Luanda (2026)
+          III Sessão Bienal Ordinária da Conferência Distrital da Juventude de Luanda
         </strong>{" "}
-        foi submetida à Direcção Distrital da Juventude (D.D.J.L).
+        foi submetida à Direção Distrital da Juventude (DDJL).
       </p>
 
       {/* Caixa de Destaque do Código Único de Inscrição */}
@@ -80,7 +81,7 @@ function SuccessContent() {
 
         <div className="flex items-center justify-center gap-3">
           <span className="text-2xl sm:text-3xl font-mono font-black tracking-widest text-emerald-900 bg-[#F1F5F9] px-5 py-2.5 rounded-2xl border-2 border-emerald-600/40 shadow-sm">
-            {registrationCode || "CDJ26-PENDENTE"}
+            {registrationCode || `${CONFERENCE_CONFIG.codePrefix}-PENDENTE`}
           </span>
 
           <button
@@ -103,7 +104,7 @@ function SuccessContent() {
           </button>
         </div>
 
-        <p className="text-[11px] text-slate-500 mt-2.5 font-medium">
+        <p className="text-xs text-slate-600 mt-2.5 font-medium">
           Tire uma captura de ecrã (screenshot) ou aponte este código com atenção.
         </p>
       </div>
@@ -117,17 +118,17 @@ function SuccessContent() {
 
         <div className="space-y-2 text-slate-600">
           <div className="flex items-start gap-2">
-            <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-[10px]">
+            <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-xs">
               1
             </span>
             <p>
-              <strong>Data & Local:</strong> 21 a 24 de Janeiro de 2026, no{" "}
-              <strong>Cargo Pastoral Monte Sinai</strong> (Distrito Eclesiástico de Luanda).
+              <strong>Data &amp; Local:</strong> {CONFERENCE_CONFIG.dateRange}, no{" "}
+              <strong>{CONFERENCE_CONFIG.venue}</strong> ({CONFERENCE_CONFIG.district}).
             </p>
           </div>
 
           <div className="flex items-start gap-2">
-            <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-[10px]">
+            <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-xs">
               2
             </span>
             <p>
@@ -158,8 +159,8 @@ export default function RegistrationSuccessPage() {
     <main className="flex-1 min-h-screen flex flex-col justify-center items-center px-4 py-12 sm:px-6 lg:px-8 bg-[#F1F5F9]">
       <Suspense
         fallback={
-          <div className="max-w-xl w-full bg-white rounded-3xl p-10 text-center border border-slate-200">
-            <p className="text-sm text-slate-500">A carregar confirmação...</p>
+          <div className="max-w-xl w-full bg-[#F1F5F9] rounded-3xl p-10 text-center border border-slate-300/80">
+            <p className="text-sm text-slate-600">A carregar confirmação...</p>
           </div>
         }
       >

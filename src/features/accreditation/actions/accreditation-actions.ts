@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 
 export interface AccreditationActionResult {
   success?: boolean;
@@ -35,7 +36,7 @@ export async function confirmAccreditation(
   const { data: conference } = await supabase
     .from("conferences")
     .select("id")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {

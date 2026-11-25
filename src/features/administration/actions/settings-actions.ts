@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentAdmin } from "./auth-actions";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 
 export interface SettingsUpdateResult {
   success?: boolean;
@@ -47,8 +48,8 @@ export async function updateConferenceSettings(
     .update({
       capacity,
       registration_open: registrationOpen,
-      code_prefix: codePrefix || "CDJ26",
-      description: location || "Plataforma oficial da III Sessão Bienal da Conferência Distrital da Juventude de Luanda.",
+      code_prefix: codePrefix || CONFERENCE_CONFIG.codePrefix,
+      description: location || `Plataforma oficial da ${CONFERENCE_CONFIG.name}.`,
       updated_at: new Date().toISOString(),
     })
     .eq("id", conferenceId);

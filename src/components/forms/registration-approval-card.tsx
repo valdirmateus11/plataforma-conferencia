@@ -49,18 +49,19 @@ export function RegistrationApprovalCard({ registrationId, currentStatus }: Prop
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-      <div className="border-b border-slate-100 pb-3">
+    <div className="bg-[#F1F5F9] rounded-2xl border border-slate-300/80 p-6 shadow-sm space-y-4">
+      <div className="border-b border-slate-200 pb-3">
         <h3 className="text-sm font-bold text-slate-900">
           Ações de Validação Administrativa
         </h3>
-        <p className="text-xs text-slate-500">
-          Decisão oficial sobre a participação do delegado na III Sessão Bienal.
+        <p className="text-xs text-slate-600">
+          Decisão oficial sobre a participação do delegado na IIIª Sessão Bienal.
         </p>
       </div>
 
       {feedback && (
         <div
+          role="status"
           className={`p-3.5 rounded-xl text-xs flex items-start gap-2.5 ${
             feedback.type === "success"
               ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
@@ -68,9 +69,9 @@ export function RegistrationApprovalCard({ registrationId, currentStatus }: Prop
           }`}
         >
           {feedback.type === "success" ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" aria-hidden="true" />
           ) : (
-            <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" aria-hidden="true" />
           )}
           <p className="leading-relaxed font-medium">{feedback.text}</p>
         </div>
@@ -88,9 +89,9 @@ export function RegistrationApprovalCard({ registrationId, currentStatus }: Prop
           onChange={(e) => setReason(e.target.value)}
           disabled={isPending}
           placeholder="Ex.: Delegação homologada pelo Pastor distrital / Documentação em conformidade..."
-          className="w-full rounded-xl border border-slate-300 p-3 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] p-3 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         />
-        <p className="text-[10px] text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Obrigatório para rejeições ou cancelamentos. Ficará registado na trilha de auditoria.
         </p>
       </div>

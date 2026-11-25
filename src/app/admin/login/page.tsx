@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Lock, Mail, KeyRound, ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { signInAdmin } from "@/features/administration/actions/auth-actions";
 import { ConferenceLogo } from "@/components/ui/conference-logo";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -104,13 +105,13 @@ export default function AdminLoginPage() {
           Acesso Administrativo
         </h1>
 
-        <p className="text-xs text-slate-500 mb-6 font-medium">
-          III Sessão Bienal da Conferência Distrital da Juventude de Luanda 2026
+        <p className="text-xs text-slate-600 mb-6 font-medium">
+          {CONFERENCE_CONFIG.name} • {CONFERENCE_CONFIG.dateRange}
         </p>
 
         <Suspense
           fallback={
-            <div className="py-8 text-center text-xs text-slate-400">
+            <div className="py-8 text-center text-xs text-slate-500">
               A carregar formulário de acesso...
             </div>
           }
@@ -119,9 +120,9 @@ export default function AdminLoginPage() {
         </Suspense>
 
         {/* Rodapé do Login */}
-        <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-3 text-xs text-slate-500">
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+        <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col items-center gap-3 text-xs text-slate-500">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" aria-hidden="true" />
             Acesso reservado exclusivamente aos operadores e secretariado.
           </div>
 

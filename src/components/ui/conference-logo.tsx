@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 
 interface ConferenceLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -17,8 +18,8 @@ export function ConferenceLogo({
   className = "",
 }: ConferenceLogoProps) {
   const dimensions = {
-    sm: { px: 32, box: "w-8 h-8", textTitle: "text-xs", textSub: "text-[9px]" },
-    md: { px: 44, box: "w-11 h-11", textTitle: "text-sm", textSub: "text-[10px]" },
+    sm: { px: 32, box: "w-8 h-8", textTitle: "text-xs", textSub: "text-xs" },
+    md: { px: 44, box: "w-11 h-11", textTitle: "text-sm", textSub: "text-xs" },
     lg: { px: 64, box: "w-16 h-16", textTitle: "text-base", textSub: "text-xs" },
     xl: { px: 88, box: "w-22 h-22", textTitle: "text-lg", textSub: "text-xs" },
   }[size];
@@ -31,7 +32,7 @@ export function ConferenceLogo({
       >
         <Image
           src="/images/logo-ddjl-badge.png"
-          alt="Logótipo D.D.J.L - Direcção Distrital da Juventude de Luanda"
+          alt={`Logótipo ${CONFERENCE_CONFIG.orgAcronym} — ${CONFERENCE_CONFIG.orgName}`}
           width={dimensions.px}
           height={dimensions.px}
           priority
@@ -46,21 +47,21 @@ export function ConferenceLogo({
               variant === "dark" ? "text-white" : "text-slate-900"
             } ${dimensions.textTitle}`}
           >
-            DDJL
+            {CONFERENCE_CONFIG.orgAcronym}
           </p>
           <p
             className={`font-semibold uppercase tracking-wide truncate ${
               variant === "dark" ? "text-emerald-400" : "text-emerald-800"
             } ${dimensions.textSub}`}
           >
-            Igreja Metodista Unida
+            {CONFERENCE_CONFIG.churchName}
           </p>
           <p
-            className={`truncate text-[9px] ${
-              variant === "dark" ? "text-slate-400" : "text-slate-500"
+            className={`truncate text-xs ${
+              variant === "dark" ? "text-slate-400" : "text-slate-600"
             }`}
           >
-            IIIª Sessão Bienal Ordinária
+            {CONFERENCE_CONFIG.editionLabel}
           </p>
         </div>
       )}

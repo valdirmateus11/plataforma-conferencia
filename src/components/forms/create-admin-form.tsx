@@ -47,7 +47,7 @@ const AVAILABLE_ROLES: RoleOption[] = [
     name: "consultant",
     label: "Consultor / Auditor",
     description: "Consulta e verificação de quórum, relatórios e auditoria",
-    badgeClass: "bg-slate-100 text-slate-700 border-slate-300",
+    badgeClass: "bg-slate-200/70 text-slate-700 border-slate-300",
   },
 ];
 
@@ -61,7 +61,7 @@ export function CreateAdminForm() {
 
   function toggleRole(role: AdminRoleName) {
     if (selectedRoles.includes(role)) {
-      if (selectedRoles.length === 1) return; // manter pelo menos uma
+      if (selectedRoles.length === 1) return;
       setSelectedRoles(selectedRoles.filter((r) => r !== role));
     } else {
       setSelectedRoles([...selectedRoles, role]);
@@ -72,7 +72,6 @@ export function CreateAdminForm() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    // Adiciona as roles selecionadas
     formData.delete("roles");
     selectedRoles.forEach((role) => formData.append("roles", role));
 
@@ -83,7 +82,6 @@ export function CreateAdminForm() {
       } else {
         setSuccessMessage("Novo utilizador administrativo criado com sucesso!");
         setSelectedRoles(["validator"]);
-        // Pequena pausa antes de fechar o formulário
         setTimeout(() => {
           setIsOpen(false);
           setSuccessMessage(null);
@@ -95,52 +93,54 @@ export function CreateAdminForm() {
   if (!isOpen) {
     return (
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all"
       >
-        <UserPlus className="w-4 h-4" />
+        <UserPlus className="w-4 h-4" aria-hidden="true" />
         Registar Novo Administrador / Operador
       </button>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-blue-200 p-6 shadow-sm space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div className="bg-[#F1F5F9] rounded-2xl border border-blue-300 p-6 shadow-sm space-y-4 w-full">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
-          <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
-            <UserPlus className="w-5 h-5" />
+          <div className="p-2 bg-blue-50 text-blue-600 rounded-xl border border-blue-200">
+            <UserPlus className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-900">Novo Utilizador Administrativo</h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-600">
               Crie contas operacionais com as funções e privilégios específicos do evento.
             </p>
           </div>
         </div>
         <button
+          type="button"
           onClick={() => {
             setIsOpen(false);
             setErrorMessage(null);
             setSuccessMessage(null);
           }}
           disabled={isPending}
-          className="text-xs text-slate-400 hover:text-slate-600 font-medium px-2 py-1 rounded"
+          className="text-xs text-slate-500 hover:text-slate-700 font-medium px-2 py-1 rounded"
         >
           Cancelar
         </button>
       </div>
 
       {errorMessage && (
-        <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div role="alert" className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {successMessage && (
-        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div role="status" className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>{successMessage}</span>
         </div>
       )}
@@ -148,62 +148,64 @@ export function CreateAdminForm() {
       <form action={handleSubmit} className="space-y-4 text-xs">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">
+            <label htmlFor="admin-display-name" className="block font-semibold text-slate-700 mb-1">
               Nome Completo <span className="text-rose-500">*</span>
             </label>
             <input
+              id="admin-display-name"
               type="text"
               name="displayName"
               required
               placeholder="Ex.: Francisco Miguel"
-              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] p-2.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">
+            <label htmlFor="admin-email" className="block font-semibold text-slate-700 mb-1">
               E-mail de Acesso <span className="text-rose-500">*</span>
             </label>
             <input
+              id="admin-email"
               type="email"
               name="email"
               required
               placeholder="operador@cdjluanda.ao"
-              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] p-2.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">
+            <label htmlFor="admin-password" className="block font-semibold text-slate-700 mb-1">
               Palavra-passe Inicial <span className="text-rose-500">*</span>
             </label>
             <input
+              id="admin-password"
               type="password"
               name="password"
               required
               minLength={6}
               placeholder="Mínimo 6 caracteres"
-              className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] p-2.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
         </div>
 
         {/* Seleção de Funções RBAC */}
         <div>
-          <label className="block font-semibold text-slate-700 mb-2">
+          <span className="block font-semibold text-slate-700 mb-2">
             Funções Atribuídas (Selecione pelo menos uma) <span className="text-rose-500">*</span>
-          </label>
+          </span>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
             {AVAILABLE_ROLES.map((r) => {
               const isChecked = selectedRoles.includes(r.name);
               return (
-                <div
+                <label
                   key={r.name}
-                  onClick={() => toggleRole(r.name)}
                   className={`p-3 rounded-xl border cursor-pointer transition-all flex items-start gap-3 select-none ${
                     isChecked
-                      ? "border-blue-500 bg-blue-50/40"
-                      : "border-slate-200 bg-slate-50/50 hover:bg-slate-50"
+                      ? "border-blue-500 bg-blue-50/70"
+                      : "border-slate-300 bg-slate-200/40 hover:bg-slate-200/70"
                   }`}
                 >
                   <input
@@ -213,24 +215,24 @@ export function CreateAdminForm() {
                     className="mt-0.5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                   <div>
-                    <div className="font-semibold text-slate-900 text-[11px]">{r.label}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
+                    <div className="font-semibold text-slate-900 text-xs">{r.label}</div>
+                    <div className="text-xs text-slate-600 mt-0.5 leading-relaxed">
                       {r.description}
                     </div>
                   </div>
-                </div>
+                </label>
               );
             })}
           </div>
         </div>
 
         {/* Botão de Submissão */}
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-200">
           <button
             type="button"
             onClick={() => setIsOpen(false)}
             disabled={isPending}
-            className="px-4 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs transition"
+            className="px-4 py-2 border border-slate-300 hover:bg-slate-200/70 text-slate-700 font-semibold rounded-xl text-xs transition"
           >
             Cancelar
           </button>
@@ -241,12 +243,12 @@ export function CreateAdminForm() {
           >
             {isPending ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                 Criando utilizador...
               </>
             ) : (
               <>
-                <UserPlus className="w-3.5 h-3.5" />
+                <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
                 Confirmar Criação
               </>
             )}

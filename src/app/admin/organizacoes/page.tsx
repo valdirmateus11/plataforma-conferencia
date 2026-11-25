@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Church, Plus, Building2 } from "lucide-react";
 import { createOrganization } from "@/features/organizations/actions/organization-actions";
-import { LUANDA_MUNICIPALITIES, PROVISIONAL_DISTRICTS } from "@/lib/validations/registration.schema";
+import { LUANDA_MUNICIPALITIES, INTENDENCIAS } from "@/lib/constants/conference-data";
 
 export const dynamic = "force-dynamic";
 
@@ -71,14 +71,14 @@ export default async function AdminOrganizacoesPage() {
 
           <div>
             <label className="block font-medium text-slate-700 mb-1">
-              Distrito Eclesiástico <span className="text-rose-500">*</span>
+              Intendência <span className="text-rose-500">*</span>
             </label>
             <select
               name="district"
               required
               className="w-full rounded-xl border border-slate-300 p-2.5 text-xs focus:border-blue-500 focus:outline-none bg-white"
             >
-              {PROVISIONAL_DISTRICTS.map((dist) => (
+              {INTENDENCIAS.map((dist) => (
                 <option key={dist} value={dist}>
                   {dist}
                 </option>
@@ -111,9 +111,9 @@ export default async function AdminOrganizacoesPage() {
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
-                  <th className="py-3 px-4">Nome da Igreja</th>
+                  <th className="py-3 px-4">Nome da Igreja / Cargo</th>
                   <th className="py-3 px-4">Município</th>
-                  <th className="py-3 px-4">Distrito Eclesiástico</th>
+                  <th className="py-3 px-4">Intendência</th>
                   <th className="py-3 px-4">Estado</th>
                 </tr>
               </thead>

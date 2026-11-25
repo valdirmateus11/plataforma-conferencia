@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import { generateCsvContent } from "@/lib/export/sanitize";
+import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import type { Registration } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
@@ -41,13 +43,7 @@ export async function GET(request: NextRequest) {
         session_date
       ),
       registrations (
-        registration_code,
-        full_name,
-        sex,
-        local_church,
-        ecclesiastical_district,
-        municipality,
-        participant_category
+        *
       )
     `)
     .eq("conference_id", conference.id)
@@ -72,35 +68,31 @@ export async function GET(request: NextRequest) {
     "Código do Participante",
     "Nome Completo",
     "Sexo",
-    "Igreja Local",
-    "Distrito Eclesiástico",
-    "Município",
-    "Categoria",
+    "E-mail",
+    "Cargo Pastoral",
+    "Intendência",
+    "Município de Residência",
+    "Função Organizacional",
+    "Categoria de Participação",
     "Estado de Presença",
     "Data/Hora de Registo",
   ];
 
   const rows = attendances.map((att) => {
     const session = att.sessions as unknown as { name: string; session_date: string } | null;
-    const reg = att.registrations as unknown as {
-      registration_code: string;
-      full_name: string;
-      sex: string;
-      local_church: string;
-      ecclesiastical_district: string;
-      municipality: string;
-      participant_category: string;
-    } | null;
+    const reg = att.registrations as unknown as Registration | null;
 
     return [
       session?.name || "Sessão",
       session?.session_date || "—",
       reg?.registration_code || "—",
       reg?.full_name || "—",
-      reg?.sex === "M" ? "Masculino" : "Feminino",
+      formatGender(reg?.sex),
+      reg?.email || "—",
       reg?.local_church || "—",
       reg?.ecclesiastical_district || "—",
       reg?.municipality || "—",
+      formatOrganizationalRole(reg?.organizational_role, reg?.custom_role),
       reg?.participant_category || "—",
       "Presente",
       new Date(att.recorded_at).toLocaleString("pt-PT"),

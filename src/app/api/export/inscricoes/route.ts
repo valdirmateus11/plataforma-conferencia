@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import { generateCsvContent } from "@/lib/export/sanitize";
-import type { RegistrationStatus } from "@/types/database.types";
+import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import type { Registration, RegistrationStatus } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
@@ -33,23 +34,11 @@ export async function GET(request: NextRequest) {
     return new NextResponse("Conferência não encontrada.", { status: 404 });
   }
 
-  // 2. Construir query de inscrições
+  // 2. Construir query de inscrições (usa * para compatibilidade antes e após migração 00009)
   let query = adminClient
     .from("registrations")
     .select(`
-      id,
-      registration_code,
-      full_name,
-      sex,
-      phone,
-      local_church,
-      ecclesiastical_district,
-      municipality,
-      organizational_role,
-      participant_category,
-      delegation_responsible,
-      status,
-      submitted_at,
+      *,
       accreditations (
         status
       )
@@ -83,19 +72,24 @@ export async function GET(request: NextRequest) {
     "Nome Completo",
     "Sexo",
     "Telefone",
-    "Igreja Local",
-    "Distrito Eclesiástico",
-    "Município",
+    "E-mail",
+    "Cargo Pastoral",
+    "Intendência",
+    "Município de Residência",
     "Função Organizacional",
-    "Categoria",
+    "Especificação da Função",
+    "Categoria de Participação",
     "Responsável Delegação",
     "Estado da Inscrição",
     "Credenciamento Presencial",
     "Data de Submissão",
   ];
 
-  const rows = registrations.map((r) => {
-    const accList = (r.accreditations as unknown as Array<{ status: string }>) || [];
+  const rows = registrations.map((raw) => {
+    const r = raw as unknown as Registration & {
+      accreditations?: Array<{ status: string }>;
+    };
+    const accList = r.accreditations || [];
     const isCredentialed = accList.some((a) => a.status === "credentialed");
 
     const statusPt: Record<string, string> = {
@@ -108,12 +102,14 @@ export async function GET(request: NextRequest) {
     return [
       r.registration_code,
       r.full_name,
-      r.sex === "M" ? "Masculino" : "Feminino",
+      formatGender(r.sex),
       r.phone,
+      r.email || "—",
       r.local_church,
       r.ecclesiastical_district,
       r.municipality,
-      r.organizational_role,
+      formatOrganizationalRole(r.organizational_role, r.custom_role),
+      r.organizational_role === "Outro" ? r.custom_role || "—" : "—",
       r.participant_category,
       r.delegation_responsible || "—",
       statusPt[r.status] || r.status,

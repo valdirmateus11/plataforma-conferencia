@@ -2,11 +2,9 @@ import { z } from "zod";
 import {
   LUANDA_MUNICIPALITIES,
   INTENDENCIAS,
-  CARGOS_PASTORAIS,
   PARTICIPANT_CATEGORIES,
   ORGANIZATIONAL_ROLES,
   isValidCargoParaIntendencia,
-  type Intendencia,
 } from "@/lib/constants/conference-data";
 
 // Re-exporta as constantes para retrocompatibilidade com componentes que importam daqui
@@ -61,10 +59,11 @@ export const publicRegistrationSchema = z
 
     email: z
       .string()
+      .trim()
       .min(1, { message: "O endereço de e-mail é obrigatório." })
       .email({ message: "Introduza um endereço de e-mail válido (ex.: nome@dominio.com)." })
       .max(254, { message: "O endereço de e-mail é demasiado longo." })
-      .transform((val) => val.trim().toLowerCase()),
+      .transform((val) => val.toLowerCase()),
 
     // -----------------------------------------------------------------------
     // Dados Eclesiásticos
@@ -172,6 +171,11 @@ export const publicRegistrationSchema = z
         "Para a categoria 'Delegado', é obrigatório indicar o Responsável da Delegação.",
       path: ["delegationResponsible"],
     }
-  );
+  )
+  // Garante consistência final no servidor: limpa customRole se Função != "Outro"
+  .transform((data) => ({
+    ...data,
+    customRole: data.organizationalRole === "Outro" ? data.customRole ?? null : null,
+  }));
 
 export type PublicRegistrationInput = z.infer<typeof publicRegistrationSchema>;

@@ -11,9 +11,11 @@ import {
 } from "lucide-react";
 import {
   LUANDA_MUNICIPALITIES,
+  INTENDENCIAS,
   PARTICIPANT_CATEGORIES,
-} from "@/lib/validations/registration.schema";
-import type { RegistrationStatus } from "@/types/database.types";
+} from "@/lib/constants/conference-data";
+import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import type { Registration, RegistrationStatus } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
@@ -61,13 +63,10 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
   const confId = conference.id;
 
-  // 2. Construção da query paginada no servidor
+  // 2. Construção da query paginada no servidor (usa * para compatibilidade antes e após migração 00009)
   let query = supabase
     .from("registrations")
-    .select(
-      "id, registration_code, full_name, sex, phone, local_church, ecclesiastical_district, municipality, organizational_role, participant_category, status, is_suspected_duplicate, submitted_at",
-      { count: "exact" }
-    )
+    .select("*", { count: "exact" })
     .eq("conference_id", confId);
 
   // Aplicação de filtros
@@ -91,11 +90,12 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
     query = query.eq("is_suspected_duplicate", true);
   }
 
-  // Pesquisa textual por código, nome ou telefone
+  // Pesquisa textual por código, nome, telefone ou e-mail
   if (searchQuery) {
-    // Se parecer um código de inscrição (ex.: CDJ26-...)
     if (searchQuery.toUpperCase().startsWith("CDJ") || searchQuery.includes("-")) {
       query = query.ilike("registration_code", `%${searchQuery}%`);
+    } else if (searchQuery.includes("@")) {
+      query = query.ilike("email", `%${searchQuery}%`);
     } else if (/^\+?\d+$/.test(searchQuery)) {
       query = query.ilike("phone", `%${searchQuery}%`);
     } else {
@@ -129,14 +129,14 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
       {/* Barra de Filtros e Pesquisa */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-        <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+        <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
           {/* Pesquisa */}
           <div className="lg:col-span-2 relative">
             <input
               type="text"
               name="q"
               defaultValue={searchQuery}
-              placeholder="Pesquisar por nome, código ou telefone..."
+              placeholder="Pesquisar por nome, código, telefone ou e-mail..."
               className="w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 py-2 text-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
@@ -154,6 +154,22 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
               <option value="approved">Aprovados</option>
               <option value="rejected">Rejeitados</option>
               <option value="cancelled">Cancelados</option>
+            </select>
+          </div>
+
+          {/* Filtro Intendência */}
+          <div>
+            <select
+              name="district"
+              defaultValue={districtFilter}
+              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">Intendência: Todas</option>
+              {INTENDENCIAS.map((dist) => (
+                <option key={dist} value={dist}>
+                  {dist}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -233,15 +249,15 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="py-3 px-4">Código</th>
                   <th className="py-3 px-4">Nome do Participante</th>
-                  <th className="py-3 px-4">Telefone</th>
-                  <th className="py-3 px-4">Igreja / Município</th>
+                  <th className="py-3 px-4">Telefone / E-mail</th>
+                  <th className="py-3 px-4">Cargo Pastoral / Intendência</th>
                   <th className="py-3 px-4">Categoria / Função</th>
                   <th className="py-3 px-4">Estado</th>
                   <th className="py-3 px-4 text-right">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {registrations.map((reg) => (
+                {(registrations as unknown as Registration[]).map((reg) => (
                   <tr key={reg.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3.5 px-4 font-mono font-bold text-blue-600">
                       {reg.registration_code}
@@ -258,18 +274,27 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-slate-400">{reg.sex}</span>
+                      <span className="text-[11px] text-slate-400">{formatGender(reg.sex)}</span>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-600">{reg.phone}</td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-mono text-slate-600">{reg.phone}</div>
+                      {reg.email && (
+                        <div className="text-[11px] text-slate-400 truncate max-w-[180px]" title={reg.email}>
+                          {reg.email}
+                        </div>
+                      )}
+                    </td>
                     <td className="py-3.5 px-4">
                       <p className="font-medium text-slate-800">{reg.local_church}</p>
                       <p className="text-[11px] text-slate-400">
-                        {reg.municipality} • {reg.ecclesiastical_district}
+                        {reg.ecclesiastical_district} • {reg.municipality}
                       </p>
                     </td>
                     <td className="py-3.5 px-4">
                       <p className="font-medium text-slate-800">{reg.participant_category}</p>
-                      <p className="text-[11px] text-slate-400">{reg.organizational_role}</p>
+                      <p className="text-[11px] text-slate-400">
+                        {formatOrganizationalRole(reg.organizational_role, reg.custom_role)}
+                      </p>
                     </td>
                     <td className="py-3.5 px-4">
                       <span

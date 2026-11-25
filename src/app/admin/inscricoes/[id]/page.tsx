@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { RegistrationApprovalCard } from "@/components/forms/registration-approval-card";
+import { formatGender } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -149,7 +150,7 @@ export default async function RegistrationDetailPage({ params }: Props) {
 
             <div>
               <span className="text-slate-400">Sexo:</span>
-              <p className="font-semibold text-slate-900 mt-0.5">{registration.sex}</p>
+              <p className="font-semibold text-slate-900 mt-0.5">{formatGender(registration.sex)}</p>
             </div>
 
             <div>
@@ -160,14 +161,16 @@ export default async function RegistrationDetailPage({ params }: Props) {
               </p>
             </div>
 
-            {registration.email && (
-              <div>
-                <span className="text-slate-400">E-mail:</span>
-                <p className="font-semibold text-slate-900 mt-0.5 break-all">
-                  {registration.email}
-                </p>
-              </div>
-            )}
+            <div>
+              <span className="text-slate-400">E-mail:</span>
+              <p className="font-semibold text-slate-900 mt-0.5 break-all">
+                {registration.email || (
+                  <span className="text-slate-400 font-normal italic">
+                    Não informado (registo anterior)
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
         </div>
 

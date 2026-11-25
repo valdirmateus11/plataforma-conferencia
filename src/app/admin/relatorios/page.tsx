@@ -13,6 +13,7 @@ import {
   Layers,
 } from "lucide-react";
 import { ExportFilterCard } from "@/components/reports/export-filter-card";
+import { isMaleSex, isFemaleSex } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -119,8 +120,8 @@ export default async function AdminRelatoriosPage() {
       categoryCounts[r.participant_category] =
         (categoryCounts[r.participant_category] || 0) + 1;
     }
-    if (r.sex === "M") maleCount++;
-    if (r.sex === "F") femaleCount++;
+    if (isMaleSex(r.sex)) maleCount++;
+    if (isFemaleSex(r.sex)) femaleCount++;
   });
 
   const sortedDistricts = Object.entries(districtCounts).sort((a, b) => b[1] - a[1]);
@@ -211,11 +212,11 @@ export default async function AdminRelatoriosPage() {
 
       {/* Relatórios Demográficos e Distribuição Territorial */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Distribuição por Distrito Eclesiástico */}
+        {/* Distribuição por Intendência */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-blue-600" />
-            Por Distrito Eclesiástico ({sortedDistricts.length})
+            Por Intendência ({sortedDistricts.length})
           </h2>
 
           <div className="space-y-2">

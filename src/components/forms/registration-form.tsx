@@ -26,6 +26,9 @@ import {
   PARTICIPANT_CATEGORIES,
   ORGANIZATIONAL_ROLES,
   type Intendencia,
+  type LuandaMunicipality,
+  type ParticipantCategory,
+  type OrganizationalRole,
 } from "@/lib/constants/conference-data";
 import { submitRegistration } from "@/features/registrations/actions/submit-registration";
 
@@ -50,12 +53,12 @@ export function RegistrationForm() {
     sex: "Masculino" as "Masculino" | "Feminino",
     phone: "",
     email: "",
-    municipality: LUANDA_MUNICIPALITIES[0],
+    municipality: LUANDA_MUNICIPALITIES[0] as LuandaMunicipality,
     ecclesiasticalDistrict: "" as Intendencia | "",
     localChurch: "",
-    organizationalRole: ORGANIZATIONAL_ROLES[0],
+    organizationalRole: ORGANIZATIONAL_ROLES[0] as OrganizationalRole,
     customRole: "",
-    participantCategory: PARTICIPANT_CATEGORIES[0],
+    participantCategory: PARTICIPANT_CATEGORIES[0] as ParticipantCategory,
     delegationResponsible: "",
     website_url: "", // Honeypot
   });
@@ -86,6 +89,28 @@ export function RegistrationForm() {
     if (name === "ecclesiasticalDistrict") {
       setFormData((prev) => ({ ...prev, [name]: value as Intendencia | "", localChurch: "" }));
       setErrors((prev) => ({ ...prev, ecclesiasticalDistrict: undefined, localChurch: undefined }));
+      return;
+    }
+
+    // Quando a Função deixa de ser "Outro", limpa a especificação anterior
+    if (name === "organizationalRole") {
+      setFormData((prev) => ({
+        ...prev,
+        organizationalRole: value as OrganizationalRole,
+        customRole: value === "Outro" ? prev.customRole : "",
+      }));
+      setErrors((prev) => ({ ...prev, organizationalRole: undefined, customRole: undefined }));
+      return;
+    }
+
+    // Quando a Categoria muda de "Delegado", limpa o responsável da delegação se aplicável
+    if (name === "participantCategory") {
+      setFormData((prev) => ({
+        ...prev,
+        participantCategory: value as ParticipantCategory,
+        delegationResponsible: value === "Delegado" ? prev.delegationResponsible : "",
+      }));
+      setErrors((prev) => ({ ...prev, participantCategory: undefined, delegationResponsible: undefined }));
       return;
     }
 

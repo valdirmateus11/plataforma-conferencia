@@ -13,7 +13,8 @@ import {
 import { SessionSelector } from "@/components/attendance/session-selector";
 import { AttendanceSearchBar } from "@/components/attendance/attendance-search-bar";
 import { AttendanceCheckinButton } from "@/components/attendance/attendance-checkin-button";
-import type { SessionStatus } from "@/types/database.types";
+import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import type { Registration, SessionStatus } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
@@ -131,20 +132,11 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
   const isQuorumSimple = quorumPercent >= 50;
   const isQuorumQualified = quorumPercent >= 66.7;
 
-  // 6. Consultar participantes elegíveis (inscrições com credenciamento ativo)
+  // 6. Consultar participantes elegíveis (usa * para compatibilidade antes e após migração 00009)
   let regQuery = adminClient
     .from("registrations")
     .select(`
-      id,
-      registration_code,
-      full_name,
-      sex,
-      phone,
-      local_church,
-      ecclesiastical_district,
-      municipality,
-      organizational_role,
-      participant_category,
+      *,
       accreditations!inner (
         id,
         status
@@ -173,7 +165,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
   // 7. Mapear e aplicar filtro por presença / ausência na sessão
   const participants = (rawParticipants || [])
     .map((p) => ({
-      ...p,
+      ...(p as unknown as Registration),
       currentAttendance: attendanceByRegId[p.id] || null,
     }))
     .filter((p) => {
@@ -337,7 +329,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/75 text-slate-600 font-semibold text-[11px] uppercase tracking-wider">
                   <th className="py-3 px-4">Código / Participante</th>
-                  <th className="py-3 px-4">Igreja / Congregação</th>
+                  <th className="py-3 px-4">Cargo Pastoral / Intendência</th>
                   <th className="py-3 px-4">Função / Categoria</th>
                   <th className="py-3 px-4 text-right">Check-in de Presença</th>
                 </tr>
@@ -354,7 +346,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
                         <Phone className="w-3 h-3 text-slate-400" />
                         <span>{p.phone}</span>
                         <span className="text-slate-300">•</span>
-                        <span>{p.sex === "M" ? "Masculino" : "Feminino"}</span>
+                        <span>{formatGender(p.sex)}</span>
                       </div>
                     </td>
 
@@ -370,7 +362,9 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
 
                     <td className="py-3.5 px-4">
                       <div className="font-medium text-slate-900 text-xs">{p.participant_category}</div>
-                      <div className="text-[11px] text-slate-500">{p.organizational_role}</div>
+                      <div className="text-[11px] text-slate-500">
+                        {formatOrganizationalRole(p.organizational_role, p.custom_role)}
+                      </div>
                     </td>
 
                     <td className="py-3.5 px-4 text-right">

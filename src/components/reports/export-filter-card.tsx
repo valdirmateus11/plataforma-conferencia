@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Download, FileSpreadsheet } from "lucide-react";
 import {
   LUANDA_MUNICIPALITIES,
-  PROVISIONAL_DISTRICTS,
+  INTENDENCIAS,
   PARTICIPANT_CATEGORIES,
-} from "@/lib/validations/registration.schema";
+} from "@/lib/constants/conference-data";
 
 interface SessionOption {
   id: string;
@@ -72,14 +72,14 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Distrito Eclesiástico</label>
+            <label className="block font-semibold text-slate-700 mb-1">Intendência</label>
             <select
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
               className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white focus:border-blue-500 focus:outline-none"
             >
-              <option value="all">Todos os Distritos</option>
-              {PROVISIONAL_DISTRICTS.map((d) => (
+              <option value="all">Todas as Intendências</option>
+              {INTENDENCIAS.map((d) => (
                 <option key={d} value={d}>
                   {d}
                 </option>

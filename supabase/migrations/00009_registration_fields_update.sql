@@ -4,16 +4,11 @@
 --
 -- ALTERAÇÕES:
 --   1. Adiciona coluna `email` (nullable, compatível com inscrições antigas)
---   2. Renomeia semanticamente `local_church` → continua a existir como `local_church`
---      (a coluna é reutilizada para Cargo Pastoral; o rename evitaria quebrar código)
---      DECISÃO: Reutilizar a coluna existente `local_church` para Cargo Pastoral,
---               actualizando apenas o comentário e removendo o NOT NULL constraint
---               temporário para permitir migração segura. Os dados históricos são preservados.
---   3. Adiciona coluna `pastoral_cargo` como alias/novo campo dedicado ao Cargo Pastoral,
---      deixando `local_church` para retrocompatibilidade com registos históricos.
---      NOTA: A aplicação escreve e lê `local_church` para Cargo Pastoral (mesma coluna,
---            novo significado semântico). Não são criadas colunas redundantes.
---   4. Adiciona coluna `custom_role` para especificação de Função quando "Outro".
+--   2. Reutiliza semanticamente `local_church` → continua a existir como `local_church`
+--      para armazenar o Cargo Pastoral associado à Intendência, actualizando apenas o
+--      comentário da coluna. Todos os dados históricos são preservados sem alteração.
+--   3. Reutiliza `ecclesiastical_district` para armazenar a Intendência (CRISH | MVC | BTS2M | C3K).
+--   4. Adiciona coluna `custom_role` (nullable) para especificação de Função quando "Outro".
 --
 -- ESTRATÉGIA:
 --   - Todas as alterações são NOT DESTRUCTIVE.
@@ -64,10 +59,14 @@ CREATE INDEX IF NOT EXISTS idx_registrations_email
   WHERE email IS NOT NULL;
 
 -- -----------------------------------------------------------------------
--- 5. Actualizar a função atómica submit_public_registration
---    para aceitar os novos parâmetros email e custom_role.
---    A função existente é substituída (CREATE OR REPLACE é idempotente).
+-- 5. Remover sobrecarga antiga (12 parâmetros) e actualizar a função atómica
+--    submit_public_registration para aceitar email e custom_role (14 parâmetros).
+--    Evita erro 42725 (function name is not unique) no REVOKE/GRANT.
 -- -----------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.submit_public_registration(
+  UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, UUID
+);
+
 CREATE OR REPLACE FUNCTION public.submit_public_registration(
   p_conference_id UUID,
   p_idempotency_key TEXT,
@@ -199,15 +198,15 @@ BEGIN
     trim(p_full_name),
     p_sex,
     trim(p_phone),
-    lower(trim(p_email)),
+    NULLIF(lower(trim(p_email)), ''),
     p_organization_id,
     trim(p_local_church),
     trim(p_ecclesiastical_district),
     trim(p_municipality),
     trim(p_organizational_role),
-    CASE WHEN trim(p_organizational_role) = 'Outro' THEN trim(p_custom_role) ELSE NULL END,
+    CASE WHEN trim(p_organizational_role) = 'Outro' THEN NULLIF(trim(p_custom_role), '') ELSE NULL END,
     trim(p_participant_category),
-    trim(p_delegation_responsible),
+    NULLIF(trim(p_delegation_responsible), ''),
     'pending',
     v_is_duplicate,
     CASE WHEN v_is_duplicate THEN jsonb_build_object('matched_registration_id', v_dup_id, 'reason', 'MATCHED_PHONE') ELSE NULL END,
@@ -223,9 +222,13 @@ BEGIN
 END;
 $$;
 
--- Manter permissões da função actualizada
-REVOKE EXECUTE ON FUNCTION public.submit_public_registration FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.submit_public_registration TO anon, authenticated;
+-- Manter permissões da função actualizada com assinatura explícita
+REVOKE EXECUTE ON FUNCTION public.submit_public_registration(
+  UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, UUID
+) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.submit_public_registration(
+  UUID, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, UUID
+) TO anon, authenticated;
 
 COMMIT;
 

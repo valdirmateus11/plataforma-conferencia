@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 import { AccreditationSearchInput } from "@/components/accreditation/accreditation-search-input";
 import { AccreditationActionButton } from "@/components/accreditation/accreditation-action-button";
-import type { RegistrationStatus } from "@/types/database.types";
+import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import type { Registration, RegistrationStatus } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
@@ -88,22 +89,11 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
   const pendingAccreditation = Math.max(0, approved - credentialed);
   const percentCredentialed = approved > 0 ? Math.round((credentialed / approved) * 100) : 0;
 
-  // 3. Consulta de inscrições com credenciamento
+  // 3. Consulta de inscrições com credenciamento (usa * para compatibilidade antes e após migração 00009)
   let regQuery = adminClient
     .from("registrations")
     .select(`
-      id,
-      registration_code,
-      full_name,
-      sex,
-      phone,
-      local_church,
-      ecclesiastical_district,
-      municipality,
-      organizational_role,
-      participant_category,
-      status,
-      submitted_at,
+      *,
       accreditations (
         id,
         status,
@@ -153,7 +143,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
     const activeAcc = accList.find((a) => a.status === "credentialed") || null;
 
     return {
-      ...r,
+      ...(r as unknown as Registration),
       activeAccreditation: activeAcc,
     };
   }).filter((r) => {
@@ -261,7 +251,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/75 text-slate-600 font-semibold text-[11px] uppercase tracking-wider">
                 <th className="py-3 px-4">Código / Participante</th>
-                <th className="py-3 px-4">Jurisdição Eclesiástica</th>
+                <th className="py-3 px-4">Cargo Pastoral / Intendência</th>
                 <th className="py-3 px-4">Função / Categoria</th>
                 <th className="py-3 px-4">Estado Inscrição</th>
                 <th className="py-3 px-4 text-right">Ação de Credenciamento</th>
@@ -287,11 +277,16 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
                         <Phone className="w-3 h-3 text-slate-400" />
                         <span>{reg.phone}</span>
                         <span className="text-slate-300">•</span>
-                        <span className="capitalize">{reg.sex === "M" ? "Masculino" : "Feminino"}</span>
+                        <span>{formatGender(reg.sex)}</span>
                       </div>
+                      {reg.email && (
+                        <div className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[200px]">
+                          {reg.email}
+                        </div>
+                      )}
                     </td>
 
-                    {/* Igreja e Distrito */}
+                    {/* Cargo Pastoral e Intendência */}
                     <td className="py-3.5 px-4">
                       <div className="font-semibold text-slate-800 text-xs flex items-center gap-1.5">
                         <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
@@ -308,7 +303,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
                         {reg.participant_category}
                       </div>
                       <div className="text-[11px] text-slate-500">
-                        {reg.organizational_role}
+                        {formatOrganizationalRole(reg.organizational_role, reg.custom_role)}
                       </div>
                     </td>
 

@@ -58,7 +58,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name, capacity, code_prefix")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {

@@ -30,7 +30,7 @@ export default async function AdminConfiguracoesPage() {
   const { data: conference } = await supabase
     .from("conferences")
     .select("id, name, capacity, registration_open, code_prefix, description, start_date, end_date")
-    .eq("slug", "iii-conferencia-distrital-luanda-2026")
+    .eq("slug", CONFERENCE_CONFIG.slug)
     .single();
 
   if (!conference) {

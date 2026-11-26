@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -14,22 +14,35 @@ import {
   Loader2,
   CheckCircle2,
   ChevronDown,
+  Calendar,
+  GraduationCap,
+  Lock,
+  Info,
 } from "lucide-react";
 import {
   publicRegistrationSchema,
   type PublicRegistrationInput,
 } from "@/lib/validations/registration.schema";
 import {
+  MARITAL_STATUSES,
+  EDUCATION_LEVELS,
   LUANDA_MUNICIPALITIES,
   INTENDENCIAS,
   CARGOS_PASTORAIS,
+  MEMBER_CATEGORIES,
   PARTICIPANT_CATEGORIES,
   ORGANIZATIONAL_ROLES,
+  evaluateBirthDateAndAgeGroup,
+  getTodayInLuandaISO,
   type Intendencia,
   type LuandaMunicipality,
   type ParticipantCategory,
   type OrganizationalRole,
+  type MaritalStatus,
+  type EducationLevel,
+  type MemberCategory,
 } from "@/lib/constants/conference-data";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { submitRegistration } from "@/features/registrations/actions/submit-registration";
 
 interface FormErrors {
@@ -51,13 +64,16 @@ export function RegistrationForm() {
   const [formData, setFormData] = useState({
     fullName: "",
     sex: "Masculino" as "Masculino" | "Feminino",
+    maritalStatus: "" as MaritalStatus | "",
+    birthDate: "",
+    educationLevel: "" as EducationLevel | "",
     phone: "",
     email: "",
     municipality: LUANDA_MUNICIPALITIES[0] as LuandaMunicipality,
     ecclesiasticalDistrict: "" as Intendencia | "",
     localChurch: "",
-    organizationalRole: ORGANIZATIONAL_ROLES[0] as OrganizationalRole,
-    customRole: "",
+    memberCategory: "" as MemberCategory | "",
+    organizationalRole: "" as OrganizationalRole | "",
     participantCategory: PARTICIPANT_CATEGORIES[0] as ParticipantCategory,
     delegationResponsible: "",
     website_url: "", // Honeypot
@@ -74,6 +90,14 @@ export function RegistrationForm() {
     setFormLoadedAt(Date.now());
   }, []);
 
+  const todayISO = useMemo(() => getTodayInLuandaISO(), []);
+
+  // Cálculo automático e reactivo da idade e faixa-etária a partir da Data de Nascimento
+  const ageEvaluation = useMemo(
+    () => evaluateBirthDateAndAgeGroup(formData.birthDate),
+    [formData.birthDate]
+  );
+
   // Cargos pastorais disponíveis para a Intendência seleccionada
   const availableCargos =
     formData.ecclesiasticalDistrict
@@ -87,36 +111,48 @@ export function RegistrationForm() {
 
     // Quando a Intendência muda, limpa o Cargo Pastoral para evitar inconsistências
     if (name === "ecclesiasticalDistrict") {
-      setFormData((prev) => ({ ...prev, [name]: value as Intendencia | "", localChurch: "" }));
-      setErrors((prev) => ({ ...prev, ecclesiasticalDistrict: undefined, localChurch: undefined }));
-      return;
-    }
-
-    // Quando a Função deixa de ser "Outro", limpa a especificação anterior
-    if (name === "organizationalRole") {
       setFormData((prev) => ({
         ...prev,
-        organizationalRole: value as OrganizationalRole,
-        customRole: value === "Outro" ? prev.customRole : "",
+        ecclesiasticalDistrict: value as Intendencia | "",
+        localChurch: "",
       }));
-      setErrors((prev) => ({ ...prev, organizationalRole: undefined, customRole: undefined }));
+      setErrors((prev) => ({
+        ...prev,
+        ecclesiasticalDistrict: undefined,
+        localChurch: undefined,
+      }));
       return;
     }
 
-    // Quando a Categoria muda de "Delegado", limpa o responsável da delegação se aplicável
+    // Quando a Data de Nascimento muda, limpa os erros de data e faixa-etária
+    if (name === "birthDate") {
+      setFormData((prev) => ({ ...prev, birthDate: value }));
+      setErrors((prev) => ({
+        ...prev,
+        birthDate: undefined,
+        ageGroup: undefined,
+      }));
+      return;
+    }
+
+    // Quando a Categoria muda de "Delegado", limpa o responsável da delegação
     if (name === "participantCategory") {
       setFormData((prev) => ({
         ...prev,
         participantCategory: value as ParticipantCategory,
-        delegationResponsible: value === "Delegado" ? prev.delegationResponsible : "",
+        delegationResponsible:
+          value === "Delegado" ? prev.delegationResponsible : "",
       }));
-      setErrors((prev) => ({ ...prev, participantCategory: undefined, delegationResponsible: undefined }));
+      setErrors((prev) => ({
+        ...prev,
+        participantCategory: undefined,
+        delegationResponsible: undefined,
+      }));
       return;
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Limpa o erro do campo ao editar
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -130,13 +166,18 @@ export function RegistrationForm() {
       idempotencyKey,
       fullName: formData.fullName,
       sex: formData.sex,
+      maritalStatus: formData.maritalStatus,
+      birthDate: formData.birthDate,
+      ageGroup: ageEvaluation.ageGroup,
+      educationLevel: formData.educationLevel,
       phone: formData.phone,
       email: formData.email,
       municipality: formData.municipality,
       ecclesiasticalDistrict: formData.ecclesiasticalDistrict,
       localChurch: formData.localChurch,
+      memberCategory: formData.memberCategory,
       organizationalRole: formData.organizationalRole,
-      customRole: formData.organizationalRole === "Outro" ? formData.customRole : null,
+      customRole: null,
       participantCategory: formData.participantCategory,
       delegationResponsible: formData.delegationResponsible || null,
       website_url: formData.website_url,
@@ -155,7 +196,6 @@ export function RegistrationForm() {
       });
       setErrors(fieldErrors);
       setGeneralError("Por favor, verifique os campos destacados abaixo.");
-      // Scroll para o primeiro erro
       setTimeout(() => {
         const firstError = document.querySelector("[data-error='true']");
         firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -182,7 +222,7 @@ export function RegistrationForm() {
       }
 
       sessionStorage.setItem(
-        "cdj26_registration_success",
+        CONFERENCE_CONFIG.successStorageKey,
         JSON.stringify({
           code: result.registrationCode,
           name: result.fullName,
@@ -190,7 +230,9 @@ export function RegistrationForm() {
         })
       );
 
-      router.push(`/inscricao/sucesso?code=${encodeURIComponent(result.registrationCode)}`);
+      router.push(
+        `/inscricao/sucesso?code=${encodeURIComponent(result.registrationCode)}`
+      );
     } catch {
       setGeneralError(
         "Ocorreu uma falha inesperada na submissão. Por favor, tente novamente."
@@ -200,7 +242,6 @@ export function RegistrationForm() {
   };
 
   const isDelegate = formData.participantCategory === "Delegado";
-  const isOtherRole = formData.organizationalRole === "Outro";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 text-left" noValidate>
@@ -233,7 +274,7 @@ export function RegistrationForm() {
           SECÇÃO 1: Dados Pessoais
       ================================================================ */}
       <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
-        <div className="border-b border-slate-100 pb-3">
+        <div className="border-b border-slate-200/80 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
             <User className="w-4 h-4 text-emerald-700" />
             Dados Pessoais
@@ -268,7 +309,7 @@ export function RegistrationForm() {
             )}
           </div>
 
-          {/* Sexo e Telefone */}
+          {/* Sexo e Estado Civil */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label
@@ -293,6 +334,132 @@ export function RegistrationForm() {
               </div>
             </div>
 
+            <div data-error={!!errors.maritalStatus}>
+              <label
+                htmlFor="maritalStatus"
+                className="block text-xs font-medium text-slate-700 mb-1.5"
+              >
+                Estado Civil <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  id="maritalStatus"
+                  name="maritalStatus"
+                  value={formData.maritalStatus}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className={`${selectBase} ${
+                    errors.maritalStatus ? "border-rose-300 bg-rose-50/50" : ""
+                  } ${!formData.maritalStatus ? "text-slate-400" : "text-slate-900"}`}
+                >
+                  <option value="" disabled>
+                    Seleccione o estado civil...
+                  </option>
+                  {MARITAL_STATUSES.map((status) => (
+                    <option key={status} value={status} className="text-slate-900">
+                      {status}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+              </div>
+              {errors.maritalStatus && (
+                <p className="mt-1 text-xs text-rose-600">
+                  {errors.maritalStatus}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Data de Nascimento e Faixa-etária (Automática) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div data-error={!!errors.birthDate}>
+              <label
+                htmlFor="birthDate"
+                className="block text-xs font-medium text-slate-700 mb-1.5"
+              >
+                Data de Nascimento <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  id="birthDate"
+                  name="birthDate"
+                  value={formData.birthDate}
+                  onChange={handleChange}
+                  max={todayISO}
+                  min="1900-01-01"
+                  disabled={isSubmitting}
+                  className={`${inputBase} pr-10 ${
+                    errors.birthDate ? inputError : inputNormal
+                  }`}
+                />
+                <Calendar className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+              </div>
+              {errors.birthDate ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.birthDate}</p>
+              ) : (
+                <p className="mt-1 text-xs text-slate-400">
+                  Usada para calcular automaticamente a faixa-etária.
+                </p>
+              )}
+            </div>
+
+            <div data-error={!!errors.ageGroup}>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="ageGroup"
+                  className="block text-xs font-medium text-slate-700"
+                >
+                  Faixa-etária
+                </label>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-200/80 text-slate-700">
+                  <Lock className="w-2.5 h-2.5" aria-hidden="true" />
+                  Automático
+                </span>
+              </div>
+              <input
+                type="text"
+                id="ageGroup"
+                name="ageGroup"
+                readOnly
+                tabIndex={-1}
+                aria-readonly="true"
+                value={
+                  ageEvaluation.ageGroup
+                    ? `${ageEvaluation.ageGroup} (${ageEvaluation.age} anos)`
+                    : ""
+                }
+                placeholder={
+                  formData.birthDate
+                    ? "Fora das faixas definidas"
+                    : "Preenchido após indicar a data"
+                }
+                className={`w-full rounded-xl border px-3.5 py-2.5 text-sm font-semibold cursor-not-allowed select-none ${
+                  ageEvaluation.ageGroup
+                    ? "border-emerald-300 bg-emerald-50/70 text-emerald-900"
+                    : formData.birthDate && !ageEvaluation.isWithinAllowedRange
+                    ? "border-amber-300 bg-amber-50/70 text-amber-800"
+                    : "border-slate-300 bg-slate-200/60 text-slate-500"
+                }`}
+              />
+              {formData.birthDate && ageEvaluation.message ? (
+                <p className="mt-1.5 text-xs text-amber-700 flex items-start gap-1.5 leading-snug">
+                  <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600" />
+                  <span>{ageEvaluation.message}</span>
+                </p>
+              ) : errors.ageGroup ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.ageGroup}</p>
+              ) : (
+                <p className="mt-1 text-xs text-slate-400">
+                  11–17 anos: Adolescente • 18–30 anos: Jovem Regular.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Telefone e E-mail */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div data-error={!!errors.phone}>
               <label
                 htmlFor="phone"
@@ -318,40 +485,76 @@ export function RegistrationForm() {
                 <p className="mt-1 text-xs text-rose-600">{errors.phone}</p>
               ) : (
                 <p className="mt-1 text-xs text-slate-400">
-                  Número para contacto e localização da inscrição no credenciamento.
+                  Contacto e localização no credenciamento.
+                </p>
+              )}
+            </div>
+
+            <div data-error={!!errors.email}>
+              <label
+                htmlFor="email"
+                className="block text-xs font-medium text-slate-700 mb-1.5"
+              >
+                Endereço de E-mail <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Ex.: nome@dominio.com"
+                  maxLength={254}
+                  autoComplete="email"
+                  disabled={isSubmitting}
+                  className={`${inputBase} ${errors.email ? inputError : inputNormal}`}
+                />
+                <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+              </div>
+              {errors.email ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.email}</p>
+              ) : (
+                <p className="mt-1 text-xs text-slate-400">
+                  Comunicações oficiais da Conferência.
                 </p>
               )}
             </div>
           </div>
 
-          {/* E-mail */}
-          <div data-error={!!errors.email}>
+          {/* Grau de Escolaridade */}
+          <div data-error={!!errors.educationLevel}>
             <label
-              htmlFor="email"
+              htmlFor="educationLevel"
               className="block text-xs font-medium text-slate-700 mb-1.5"
             >
-              Endereço de E-mail <span className="text-rose-500">*</span>
+              Grau de Escolaridade <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+              <select
+                id="educationLevel"
+                name="educationLevel"
+                value={formData.educationLevel}
                 onChange={handleChange}
-                placeholder="Ex.: nome@dominio.com"
-                maxLength={254}
-                autoComplete="email"
                 disabled={isSubmitting}
-                className={`${inputBase} ${errors.email ? inputError : inputNormal}`}
-              />
-              <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+                className={`${selectBase} ${
+                  errors.educationLevel ? "border-rose-300 bg-rose-50/50" : ""
+                } ${!formData.educationLevel ? "text-slate-400" : "text-slate-900"}`}
+              >
+                <option value="" disabled>
+                  Seleccione o grau de escolaridade...
+                </option>
+                {EDUCATION_LEVELS.map((level) => (
+                  <option key={level} value={level} className="text-slate-900">
+                    {level}
+                  </option>
+                ))}
+              </select>
+              <GraduationCap className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
             </div>
-            {errors.email ? (
-              <p className="mt-1 text-xs text-rose-600">{errors.email}</p>
-            ) : (
-              <p className="mt-1 text-xs text-slate-400">
-                Utilizado apenas para comunicações oficiais da Conferência.
+            {errors.educationLevel && (
+              <p className="mt-1 text-xs text-rose-600">
+                {errors.educationLevel}
               </p>
             )}
           </div>
@@ -362,13 +565,13 @@ export function RegistrationForm() {
           SECÇÃO 2: Dados Eclesiásticos e Localização
       ================================================================ */}
       <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
-        <div className="border-b border-slate-100 pb-3">
+        <div className="border-b border-slate-200/80 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
             <Church className="w-4 h-4 text-emerald-700" />
             Dados Eclesiásticos e Localização
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Informações sobre a sua jurisdição eclesiástica e localização.
+            Informações sobre a sua jurisdição eclesiástica, categoria e localização.
           </p>
         </div>
 
@@ -417,13 +620,21 @@ export function RegistrationForm() {
                   value={formData.ecclesiasticalDistrict}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className={`${selectBase} ${!formData.ecclesiasticalDistrict ? "text-slate-400" : ""}`}
+                  className={`${selectBase} ${
+                    errors.ecclesiasticalDistrict
+                      ? "border-rose-300 bg-rose-50/50"
+                      : ""
+                  } ${
+                    !formData.ecclesiasticalDistrict
+                      ? "text-slate-400"
+                      : "text-slate-900"
+                  }`}
                 >
                   <option value="" disabled>
                     Seleccione a Intendência...
                   </option>
                   {INTENDENCIAS.map((dist) => (
-                    <option key={dist} value={dist}>
+                    <option key={dist} value={dist} className="text-slate-900">
                       {dist}
                     </option>
                   ))}
@@ -464,7 +675,7 @@ export function RegistrationForm() {
                     : !formData.ecclesiasticalDistrict
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                } ${!formData.localChurch ? "text-slate-400" : ""}`}
+                } ${!formData.localChurch ? "text-slate-400" : "text-slate-900"}`}
               >
                 <option value="" disabled>
                   {formData.ecclesiasticalDistrict
@@ -472,7 +683,7 @@ export function RegistrationForm() {
                     : "Seleccione primeiro a Intendência"}
                 </option>
                 {availableCargos.map((cargo) => (
-                  <option key={cargo} value={cargo}>
+                  <option key={cargo} value={cargo} className="text-slate-900">
                     {cargo}
                   </option>
                 ))}
@@ -490,6 +701,43 @@ export function RegistrationForm() {
               </p>
             ) : null}
           </div>
+
+          {/* Categoria de Membro (após Intendência e Cargo Pastoral) */}
+          <div data-error={!!errors.memberCategory}>
+            <label
+              htmlFor="memberCategory"
+              className="block text-xs font-medium text-slate-700 mb-1.5"
+            >
+              Categoria de Membro <span className="text-rose-500">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id="memberCategory"
+                name="memberCategory"
+                value={formData.memberCategory}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                className={`${selectBase} ${
+                  errors.memberCategory ? "border-rose-300 bg-rose-50/50" : ""
+                } ${!formData.memberCategory ? "text-slate-400" : "text-slate-900"}`}
+              >
+                <option value="" disabled>
+                  Seleccione a categoria de membro...
+                </option>
+                {MEMBER_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat} className="text-slate-900">
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
+            </div>
+            {errors.memberCategory && (
+              <p className="mt-1 text-xs text-rose-600">
+                {errors.memberCategory}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -497,7 +745,7 @@ export function RegistrationForm() {
           SECÇÃO 3: Função e Participação
       ================================================================ */}
       <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
-        <div className="border-b border-slate-100 pb-3">
+        <div className="border-b border-slate-200/80 pb-3">
           <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-emerald-700" />
             Função e Participação
@@ -551,10 +799,21 @@ export function RegistrationForm() {
                   value={formData.organizationalRole}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className={selectBase}
+                  className={`${selectBase} ${
+                    errors.organizationalRole
+                      ? "border-rose-300 bg-rose-50/50"
+                      : ""
+                  } ${
+                    !formData.organizationalRole
+                      ? "text-slate-400"
+                      : "text-slate-900"
+                  }`}
                 >
+                  <option value="" disabled>
+                    Seleccione a função na organização...
+                  </option>
                   {ORGANIZATIONAL_ROLES.map((role) => (
-                    <option key={role} value={role}>
+                    <option key={role} value={role} className="text-slate-900">
                       {role}
                     </option>
                   ))}
@@ -568,32 +827,6 @@ export function RegistrationForm() {
               )}
             </div>
           </div>
-
-          {/* Campo adicional quando Função = "Outro" */}
-          {isOtherRole && (
-            <div data-error={!!errors.customRole}>
-              <label
-                htmlFor="customRole"
-                className="block text-xs font-medium text-slate-700 mb-1.5"
-              >
-                Especifique a sua função <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="customRole"
-                name="customRole"
-                value={formData.customRole}
-                onChange={handleChange}
-                placeholder="Ex.: Animador Juvenil / Representante Distrital"
-                maxLength={80}
-                disabled={isSubmitting}
-                className={`${inputBase} ${errors.customRole ? inputError : inputNormal}`}
-              />
-              {errors.customRole && (
-                <p className="mt-1 text-xs text-rose-600">{errors.customRole}</p>
-              )}
-            </div>
-          )}
 
           {/* Responsável da Delegação (condicional para Delegados) */}
           {isDelegate && (
@@ -656,8 +889,9 @@ export function RegistrationForm() {
         </button>
 
         <p className="text-center text-xs text-slate-400 mt-3 leading-relaxed">
-          Ao submeter, os seus dados serão registados de forma confidencial para a III Sessão
-          Bienal. Será gerado um código único de inscrição para credenciamento no evento.
+          Ao submeter, os seus dados serão registados de forma confidencial para a{" "}
+          {CONFERENCE_CONFIG.editionLabel}. Será gerado um código único de
+          inscrição para credenciamento no evento.
         </p>
       </div>
     </form>

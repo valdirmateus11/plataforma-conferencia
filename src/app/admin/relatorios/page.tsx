@@ -12,9 +12,11 @@ import {
   MapPin,
   Calendar,
   Layers,
+  GraduationCap,
 } from "lucide-react";
 import { ExportFilterCard } from "@/components/reports/export-filter-card";
 import { isMaleSex, isFemaleSex } from "@/lib/utils";
+import type { Registration } from "@/types/database.types";
 
 export const dynamic = "force-dynamic";
 
@@ -91,21 +93,22 @@ export default async function AdminRelatoriosPage() {
     .eq("conference_id", confId)
     .eq("status", "present");
 
-  // 4. Obter dados demográficos dos inscritos
+  // 4. Obter dados demográficos dos inscritos (usa * para compatibilidade pré e pós migração 00010)
   const { data: allRegistrations } = await supabase
     .from("registrations")
-    .select("sex, ecclesiastical_district, municipality, participant_category")
+    .select("*")
     .eq("conference_id", confId);
 
-  const regs = allRegistrations || [];
+  const regs = (allRegistrations || []) as unknown as Registration[];
 
-  // Agregações por Distrito
+  // Agregações
   const districtCounts: Record<string, number> = {};
-  // Agregações por Município
   const municipalityCounts: Record<string, number> = {};
-  // Agregações por Categoria
   const categoryCounts: Record<string, number> = {};
-  // Agregações por Sexo
+  const ageGroupCounts: Record<string, number> = {};
+  const memberCategoryCounts: Record<string, number> = {};
+  const maritalStatusCounts: Record<string, number> = {};
+  const educationLevelCounts: Record<string, number> = {};
   let maleCount = 0;
   let femaleCount = 0;
 
@@ -121,6 +124,21 @@ export default async function AdminRelatoriosPage() {
       categoryCounts[r.participant_category] =
         (categoryCounts[r.participant_category] || 0) + 1;
     }
+    if (r.age_group) {
+      ageGroupCounts[r.age_group] = (ageGroupCounts[r.age_group] || 0) + 1;
+    }
+    if (r.member_category) {
+      memberCategoryCounts[r.member_category] =
+        (memberCategoryCounts[r.member_category] || 0) + 1;
+    }
+    if (r.marital_status) {
+      maritalStatusCounts[r.marital_status] =
+        (maritalStatusCounts[r.marital_status] || 0) + 1;
+    }
+    if (r.education_level) {
+      educationLevelCounts[r.education_level] =
+        (educationLevelCounts[r.education_level] || 0) + 1;
+    }
     if (isMaleSex(r.sex)) maleCount++;
     if (isFemaleSex(r.sex)) femaleCount++;
   });
@@ -128,6 +146,10 @@ export default async function AdminRelatoriosPage() {
   const sortedDistricts = Object.entries(districtCounts).sort((a, b) => b[1] - a[1]);
   const sortedMunicipalities = Object.entries(municipalityCounts).sort((a, b) => b[1] - a[1]);
   const sortedCategories = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1]);
+  const sortedAgeGroups = Object.entries(ageGroupCounts).sort((a, b) => b[1] - a[1]);
+  const sortedMemberCategories = Object.entries(memberCategoryCounts).sort((a, b) => b[1] - a[1]);
+  const sortedMaritalStatuses = Object.entries(maritalStatusCounts).sort((a, b) => b[1] - a[1]);
+  const sortedEducationLevels = Object.entries(educationLevelCounts).sort((a, b) => b[1] - a[1]);
 
   return (
     <div className="space-y-6">
@@ -312,7 +334,7 @@ export default async function AdminRelatoriosPage() {
 
           {/* Categorias */}
           <div className="space-y-2">
-            <div className="text-[11px] font-semibold text-slate-600">Por Categoria:</div>
+            <div className="text-[11px] font-semibold text-slate-600">Por Categoria de Participação:</div>
             {sortedCategories.map(([cat, count]) => {
               const pct = regs.length > 0 ? Math.round((count / regs.length) * 100) : 0;
               return (
@@ -332,6 +354,131 @@ export default async function AdminRelatoriosPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </div>
+
+      {/* Novos Indicadores: Faixa-etária, Categoria de Membro, Estado Civil e Escolaridade */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Faixa-etária & Estado Civil */}
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <Users className="w-4 h-4 text-orange-600" />
+            Faixa-etária & Estado Civil
+          </h2>
+
+          <div className="space-y-2">
+            <div className="text-[11px] font-semibold text-slate-600">Por Faixa-etária:</div>
+            {sortedAgeGroups.length > 0 ? (
+              sortedAgeGroups.map(([group, count]) => {
+                const pct = regs.length > 0 ? Math.round((count / regs.length) * 100) : 0;
+                return (
+                  <div key={group} className="space-y-1">
+                    <div className="flex justify-between text-xs font-medium text-slate-700">
+                      <span>{group}</span>
+                      <span className="font-bold text-slate-900 font-mono">
+                        {count} ({pct}%)
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-orange-500 h-full rounded-full transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xs text-slate-400 italic">Sem dados de faixa-etária (após novas inscrições).</p>
+            )}
+          </div>
+
+          <div className="pt-2 border-t border-slate-200/70 space-y-2">
+            <div className="text-[11px] font-semibold text-slate-600">Por Estado Civil:</div>
+            {sortedMaritalStatuses.length > 0 ? (
+              sortedMaritalStatuses.map(([status, count]) => {
+                const pct = regs.length > 0 ? Math.round((count / regs.length) * 100) : 0;
+                return (
+                  <div key={status} className="flex justify-between text-xs font-medium text-slate-700">
+                    <span>{status}</span>
+                    <span className="font-bold text-slate-900 font-mono">
+                      {count} ({pct}%)
+                    </span>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xs text-slate-400 italic">Sem dados de estado civil.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Categoria de Membro */}
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            Categoria de Membro
+          </h2>
+
+          <div className="space-y-2">
+            {sortedMemberCategories.length > 0 ? (
+              sortedMemberCategories.map(([mc, count]) => {
+                const pct = regs.length > 0 ? Math.round((count / regs.length) * 100) : 0;
+                return (
+                  <div key={mc} className="space-y-1">
+                    <div className="flex justify-between text-xs font-medium text-slate-700">
+                      <span>{mc}</span>
+                      <span className="font-bold text-slate-900 font-mono">
+                        {count} ({pct}%)
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-emerald-600 h-full rounded-full transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xs text-slate-400 italic">Sem dados de categoria de membro.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Grau de Escolaridade */}
+        <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <GraduationCap className="w-4 h-4 text-blue-600" />
+            Grau de Escolaridade
+          </h2>
+
+          <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+            {sortedEducationLevels.length > 0 ? (
+              sortedEducationLevels.map(([edu, count]) => {
+                const pct = regs.length > 0 ? Math.round((count / regs.length) * 100) : 0;
+                return (
+                  <div key={edu} className="space-y-1">
+                    <div className="flex justify-between text-xs font-medium text-slate-700">
+                      <span className="truncate max-w-[170px]">{edu}</span>
+                      <span className="font-bold text-slate-900 font-mono">
+                        {count} ({pct}%)
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-blue-600 h-full rounded-full transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xs text-slate-400 italic">Sem dados de escolaridade.</p>
+            )}
           </div>
         </div>
       </div>

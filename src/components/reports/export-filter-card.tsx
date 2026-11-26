@@ -6,6 +6,8 @@ import {
   LUANDA_MUNICIPALITIES,
   INTENDENCIAS,
   PARTICIPANT_CATEGORIES,
+  AGE_GROUPS,
+  MEMBER_CATEGORIES,
 } from "@/lib/constants/conference-data";
 
 interface SessionOption {
@@ -22,6 +24,8 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
   const [district, setDistrict] = useState("all");
   const [municipality, setMunicipality] = useState("all");
   const [category, setCategory] = useState("all");
+  const [ageGroup, setAgeGroup] = useState("all");
+  const [memberCategory, setMemberCategory] = useState("all");
   const [selectedSession, setSelectedSession] = useState("all");
 
   function handleExportRegistrations() {
@@ -30,6 +34,8 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
     if (district !== "all") params.set("district", district);
     if (municipality !== "all") params.set("municipality", municipality);
     if (category !== "all") params.set("category", category);
+    if (ageGroup !== "all") params.set("ageGroup", ageGroup);
+    if (memberCategory !== "all") params.set("memberCategory", memberCategory);
 
     window.location.href = `/api/export/inscricoes?${params.toString()}`;
   }
@@ -126,6 +132,44 @@ export function ExportFilterCard({ sessions }: ExportFilterCardProps) {
               {PARTICIPANT_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
                   {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="export-age-group" className="block font-semibold text-slate-700 mb-1">
+              Faixa-etária
+            </label>
+            <select
+              id="export-age-group"
+              value={ageGroup}
+              onChange={(e) => setAgeGroup(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">Todas as Faixas</option>
+              {AGE_GROUPS.map((ag) => (
+                <option key={ag} value={ag}>
+                  {ag}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="export-member-category" className="block font-semibold text-slate-700 mb-1">
+              Categoria de Membro
+            </label>
+            <select
+              id="export-member-category"
+              value={memberCategory}
+              onChange={(e) => setMemberCategory(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 p-2 text-xs bg-[#F1F5F9] focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">Todas</option>
+              {MEMBER_CATEGORIES.map((mc) => (
+                <option key={mc} value={mc}>
+                  {mc}
                 </option>
               ))}
             </select>

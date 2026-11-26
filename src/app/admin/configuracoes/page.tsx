@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import { Settings, ShieldAlert, Info, ShieldCheck } from "lucide-react";
 import { ConferenceSettingsForm } from "@/components/forms/conference-settings-form";

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { CONFERENCE_CONFIG } from "@/lib/config";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import {
@@ -278,6 +279,12 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
                         <span>{reg.phone}</span>
                         <span className="text-slate-300">•</span>
                         <span>{formatGender(reg.sex)}</span>
+                        {reg.age_group && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span>{reg.age_group}</span>
+                          </>
+                        )}
                       </div>
                       {reg.email && (
                         <div className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[200px]">
@@ -294,6 +301,7 @@ export default async function AdminCredenciamentoPage({ searchParams }: SearchPr
                       </div>
                       <div className="text-[11px] text-slate-500 mt-0.5">
                         {reg.ecclesiastical_district} • {reg.municipality}
+                        {reg.member_category ? ` • ${reg.member_category}` : ""}
                       </div>
                     </td>
 

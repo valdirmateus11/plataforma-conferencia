@@ -15,7 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { RegistrationApprovalCard } from "@/components/forms/registration-approval-card";
-import { formatGender } from "@/lib/utils";
+import { formatGender, formatBirthDate, formatOrganizationalRole } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -148,9 +148,55 @@ export default async function RegistrationDetailPage({ params }: Props) {
               <p className="font-semibold text-slate-900 mt-0.5">{registration.full_name}</p>
             </div>
 
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <span className="text-slate-400">Sexo:</span>
+                <p className="font-semibold text-slate-900 mt-0.5">{formatGender(registration.sex)}</p>
+              </div>
+
+              <div>
+                <span className="text-slate-400">Estado Civil:</span>
+                <p className="font-semibold text-slate-900 mt-0.5">
+                  {registration.marital_status || (
+                    <span className="text-slate-400 font-normal italic">Registo anterior</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <span className="text-slate-400">Data de Nascimento:</span>
+                <p className="font-semibold text-slate-900 mt-0.5">
+                  {registration.birth_date ? (
+                    formatBirthDate(registration.birth_date)
+                  ) : (
+                    <span className="text-slate-400 font-normal italic">Registo anterior</span>
+                  )}
+                </p>
+              </div>
+
+              <div>
+                <span className="text-slate-400">Faixa-etária:</span>
+                <p className="font-semibold text-slate-900 mt-0.5">
+                  {registration.age_group ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      {registration.age_group}
+                    </span>
+                  ) : (
+                    <span className="text-slate-400 font-normal italic">Registo anterior</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
             <div>
-              <span className="text-slate-400">Sexo:</span>
-              <p className="font-semibold text-slate-900 mt-0.5">{formatGender(registration.sex)}</p>
+              <span className="text-slate-400">Grau de Escolaridade:</span>
+              <p className="font-semibold text-slate-900 mt-0.5">
+                {registration.education_level || (
+                  <span className="text-slate-400 font-normal italic">Registo anterior</span>
+                )}
+              </p>
             </div>
 
             <div>
@@ -183,14 +229,23 @@ export default async function RegistrationDetailPage({ params }: Props) {
 
           <div className="space-y-3 text-xs">
             <div>
+              <span className="text-slate-400">Intendência:</span>
+              <p className="font-semibold text-slate-900 mt-0.5">
+                {registration.ecclesiastical_district}
+              </p>
+            </div>
+
+            <div>
               <span className="text-slate-400">Cargo Pastoral:</span>
               <p className="font-semibold text-slate-900 mt-0.5">{registration.local_church}</p>
             </div>
 
             <div>
-              <span className="text-slate-400">Intendência:</span>
+              <span className="text-slate-400">Categoria de Membro:</span>
               <p className="font-semibold text-slate-900 mt-0.5">
-                {registration.ecclesiastical_district}
+                {registration.member_category || (
+                  <span className="text-slate-400 font-normal italic">Registo anterior</span>
+                )}
               </p>
             </div>
 
@@ -222,12 +277,7 @@ export default async function RegistrationDetailPage({ params }: Props) {
             <div>
               <span className="text-slate-400">Função na Organização:</span>
               <p className="font-semibold text-slate-900 mt-0.5">
-                {registration.organizational_role}
-                {registration.custom_role && (
-                  <span className="ml-1 text-slate-500 font-normal">
-                    ({registration.custom_role})
-                  </span>
-                )}
+                {formatOrganizationalRole(registration.organizational_role, registration.custom_role)}
               </p>
             </div>
 

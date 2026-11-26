@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import { generateCsvContent } from "@/lib/export/sanitize";
-import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import { formatGender, formatOrganizationalRole, formatBirthDate } from "@/lib/utils";
 import { CONFERENCE_CONFIG } from "@/lib/config";
 import { checkExportRateLimit } from "@/lib/security/rate-limit";
 import type { Registration } from "@/types/database.types";
@@ -104,10 +104,15 @@ export async function GET(request: NextRequest) {
     "Código do Participante",
     "Nome Completo",
     "Sexo",
+    "Estado Civil",
+    "Data de Nascimento",
+    "Faixa-etária",
+    "Grau de Escolaridade",
     "E-mail",
-    "Cargo Pastoral",
     "Intendência",
+    "Cargo Pastoral",
     "Município de Residência",
+    "Categoria de Membro",
     "Função Organizacional",
     "Categoria de Participação",
     "Estado de Presença",
@@ -124,10 +129,15 @@ export async function GET(request: NextRequest) {
       reg?.registration_code || "—",
       reg?.full_name || "—",
       formatGender(reg?.sex),
+      reg?.marital_status || "—",
+      formatBirthDate(reg?.birth_date),
+      reg?.age_group || "—",
+      reg?.education_level || "—",
       reg?.email || "—",
-      reg?.local_church || "—",
       reg?.ecclesiastical_district || "—",
+      reg?.local_church || "—",
       reg?.municipality || "—",
+      reg?.member_category || "—",
       formatOrganizationalRole(reg?.organizational_role, reg?.custom_role),
       reg?.participant_category || "—",
       "Presente",

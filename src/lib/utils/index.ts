@@ -48,3 +48,13 @@ export function formatOrganizationalRole(
   }
   return base;
 }
+
+/**
+ * Formata uma data ISO YYYY-MM-DD para DD/MM/YYYY sem deslocamento de fuso horário.
+ */
+export function formatBirthDate(birthDate: string | null | undefined): string {
+  if (!birthDate) return "—";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthDate.trim());
+  if (!match) return birthDate;
+  return `${match[3]}/${match[2]}/${match[1]}`;
+}

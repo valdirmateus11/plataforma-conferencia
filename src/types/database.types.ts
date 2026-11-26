@@ -40,17 +40,27 @@ export type Registration = {
   registration_code: string;
   full_name: string;
   sex: string;
+  /** Estado civil ('Solteiro' | 'Casado'). Nullable para compatibilidade com registos históricos. */
+  marital_status: string | null;
+  /** Data de nascimento (YYYY-MM-DD). Nullable para compatibilidade com registos históricos. */
+  birth_date: string | null;
+  /** Faixa-etária calculada automaticamente ('Adolescente' | 'Jovem Regular'). Nullable para registos históricos. */
+  age_group: string | null;
+  /** Grau de escolaridade. Nullable para compatibilidade com registos históricos. */
+  education_level: string | null;
   phone: string;
   /** E-mail do inscrito. Nullable para compatibilidade com registos anteriores à migração 00009. */
   email: string | null;
   organization_id: string | null;
   /** Cargo Pastoral do inscrito (coluna reutilizada; historicamente: Igreja Local/Congregação). */
   local_church: string;
-  /** Intendência Eclesiástica (CRISH | MVC | BTS2M | C3K). */
+  /** Intendência Eclesiástica (LC | VC | TBKK; histórico preservado). */
   ecclesiastical_district: string;
   municipality: string;
+  /** Categoria de Membro ('Catecúmeno' | 'À Prova' | 'Efectivo'). Nullable para compatibilidade histórica. */
+  member_category: string | null;
   organizational_role: string;
-  /** Especificação da função quando organizational_role = 'Outro'. Nullable. */
+  /** Especificação da função histórica quando organizational_role = 'Outro'. Nullable. */
   custom_role: string | null;
   participant_category: string;
   delegation_responsible: string | null;
@@ -276,9 +286,14 @@ export type Database = {
           p_sex: string;
           p_phone: string;
           p_email?: string | null;
+          p_marital_status?: string | null;
+          p_birth_date?: string | null;
+          p_age_group?: string | null;
+          p_education_level?: string | null;
           p_local_church?: string | null;
           p_ecclesiastical_district?: string | null;
           p_municipality?: string | null;
+          p_member_category?: string | null;
           p_organizational_role?: string | null;
           p_custom_role?: string | null;
           p_participant_category?: string | null;

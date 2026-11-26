@@ -14,6 +14,8 @@ import {
   LUANDA_MUNICIPALITIES,
   INTENDENCIAS,
   PARTICIPANT_CATEGORIES,
+  AGE_GROUPS,
+  MEMBER_CATEGORIES,
 } from "@/lib/constants/conference-data";
 import { formatGender, formatOrganizationalRole } from "@/lib/utils";
 import type { Registration, RegistrationStatus } from "@/types/database.types";
@@ -27,6 +29,8 @@ interface SearchProps {
     district?: string;
     municipality?: string;
     category?: string;
+    ageGroup?: string;
+    memberCategory?: string;
     duplicate?: string;
     page?: string;
   }>;
@@ -41,6 +45,8 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
   const districtFilter = params.district || "all";
   const municipalityFilter = params.municipality || "all";
   const categoryFilter = params.category || "all";
+  const ageGroupFilter = params.ageGroup || "all";
+  const memberCategoryFilter = params.memberCategory || "all";
   const duplicateOnly = params.duplicate === "true";
   const currentPage = Math.max(1, parseInt(params.page || "1", 10));
   const pageSize = 15;
@@ -64,7 +70,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
   const confId = conference.id;
 
-  // 2. Construção da query paginada no servidor (usa * para compatibilidade antes e após migração 00009)
+  // 2. Construção da query paginada no servidor (usa * para compatibilidade pré e pós migração 00010)
   let query = supabase
     .from("registrations")
     .select("*", { count: "exact" })
@@ -85,6 +91,14 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
   if (categoryFilter !== "all") {
     query = query.eq("participant_category", categoryFilter);
+  }
+
+  if (ageGroupFilter !== "all") {
+    query = query.eq("age_group", ageGroupFilter);
+  }
+
+  if (memberCategoryFilter !== "all") {
+    query = query.eq("member_category", memberCategoryFilter);
   }
 
   if (duplicateOnly) {
@@ -113,6 +127,17 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
   const totalPages = Math.ceil((totalCount || 0) / pageSize);
 
+  const buildPaginationHref = (page: number) =>
+    `/admin/inscricoes?page=${page}&q=${encodeURIComponent(
+      searchQuery
+    )}&status=${encodeURIComponent(statusFilter)}&district=${encodeURIComponent(
+      districtFilter
+    )}&category=${encodeURIComponent(categoryFilter)}&municipality=${encodeURIComponent(
+      municipalityFilter
+    )}&ageGroup=${encodeURIComponent(ageGroupFilter)}&memberCategory=${encodeURIComponent(
+      memberCategoryFilter
+    )}${duplicateOnly ? "&duplicate=true" : ""}`;
+
   return (
     <div className="space-y-6">
       {/* Cabeçalho */}
@@ -130,9 +155,9 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
       {/* Barra de Filtros e Pesquisa */}
       <div className="bg-[#F1F5F9] rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-        <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+        <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Pesquisa */}
-          <div className="lg:col-span-2 relative">
+          <div className="sm:col-span-2 relative">
             <input
               type="text"
               name="q"
@@ -174,14 +199,46 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
             </select>
           </div>
 
-          {/* Filtro Categoria */}
+          {/* Filtro Faixa-etária */}
+          <div>
+            <select
+              name="ageGroup"
+              defaultValue={ageGroupFilter}
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">Faixa-etária: Todas</option>
+              {AGE_GROUPS.map((ag) => (
+                <option key={ag} value={ag}>
+                  {ag}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro Categoria de Membro */}
+          <div>
+            <select
+              name="memberCategory"
+              defaultValue={memberCategoryFilter}
+              className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">Membro: Todos</option>
+              {MEMBER_CATEGORIES.map((mc) => (
+                <option key={mc} value={mc}>
+                  {mc}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filtro Categoria de Participação */}
           <div>
             <select
               name="category"
               defaultValue={categoryFilter}
               className="w-full rounded-xl border border-slate-300 bg-[#F1F5F9] px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
             >
-              <option value="all">Categoria: Todas</option>
+              <option value="all">Participação: Todas</option>
               {PARTICIPANT_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -207,21 +264,21 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
           </div>
 
           {/* Botão de Filtrar */}
-          <div className="flex items-center gap-2">
-            <button
-              type="submit"
-              className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-colors"
-            >
-              <Filter className="w-3.5 h-3.5" />
-              Filtrar
-            </button>
+          <div className="sm:col-span-2 lg:col-span-4 flex items-center justify-end gap-2">
             <Link
               href="/admin/inscricoes"
-              className="px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
               title="Limpar Filtros"
             >
               Limpar
             </Link>
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition-colors"
+            >
+              <Filter className="w-3.5 h-3.5" />
+              Filtrar
+            </button>
           </div>
         </form>
 
@@ -249,7 +306,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="py-3 px-4">Código</th>
-                  <th className="py-3 px-4">Nome do Participante</th>
+                  <th className="py-3 px-4">Nome / Perfil Etário</th>
                   <th className="py-3 px-4">Telefone / E-mail</th>
                   <th className="py-3 px-4">Cargo Pastoral / Intendência</th>
                   <th className="py-3 px-4">Categoria / Função</th>
@@ -275,7 +332,11 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-slate-400">{formatGender(reg.sex)}</span>
+                      <span className="text-[11px] text-slate-400">
+                        {formatGender(reg.sex)}
+                        {reg.age_group ? ` • ${reg.age_group}` : ""}
+                        {reg.marital_status ? ` • ${reg.marital_status}` : ""}
+                      </span>
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-mono text-slate-600">{reg.phone}</div>
@@ -289,6 +350,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
                       <p className="font-medium text-slate-800">{reg.local_church}</p>
                       <p className="text-[11px] text-slate-400">
                         {reg.ecclesiastical_district} • {reg.municipality}
+                        {reg.member_category ? ` • ${reg.member_category}` : ""}
                       </p>
                     </td>
                     <td className="py-3.5 px-4">
@@ -340,9 +402,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
             <div className="flex items-center gap-2">
               {currentPage > 1 ? (
                 <Link
-                  href={`/admin/inscricoes?page=${currentPage - 1}&q=${encodeURIComponent(
-                    searchQuery
-                  )}&status=${statusFilter}&category=${categoryFilter}&municipality=${municipalityFilter}`}
+                  href={buildPaginationHref(currentPage - 1)}
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-[#F1F5F9] hover:bg-slate-50 transition-colors"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
@@ -357,9 +417,7 @@ export default async function AdminInscricoesPage({ searchParams }: SearchProps)
 
               {currentPage < totalPages ? (
                 <Link
-                  href={`/admin/inscricoes?page=${currentPage + 1}&q=${encodeURIComponent(
-                    searchQuery
-                  )}&status=${statusFilter}&category=${categoryFilter}&municipality=${municipalityFilter}`}
+                  href={buildPaginationHref(currentPage + 1)}
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-300 bg-[#F1F5F9] hover:bg-slate-50 transition-colors"
                 >
                   Seguinte

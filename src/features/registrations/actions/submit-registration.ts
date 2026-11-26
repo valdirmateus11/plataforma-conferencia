@@ -34,7 +34,7 @@ export async function submitRegistration(
     };
   }
 
-  // 2. Defesa contra submissão instantânea por automação (< 2 segundos)
+  // 2. Defesa contra submissão instantânea por automação (< 1.8 segundos)
   if (rawInput.formLoadedAt && Date.now() - rawInput.formLoadedAt < 1800) {
     return {
       success: false,
@@ -43,13 +43,15 @@ export async function submitRegistration(
     };
   }
 
-  // 3. Validação rigorosa no servidor com Zod (incluindo cruzamento Intendência↔Cargo Pastoral)
+  // 3. Validação rigorosa no servidor com Zod
+  //    (data de nascimento, idade 11-30, derivação de faixa-etária, estado civil,
+  //     escolaridade, intendência ↔ cargo pastoral, categoria de membro e função)
   const validation = publicRegistrationSchema.safeParse(rawInput);
   if (!validation.success) {
     const flatErrors = validation.error.flatten().fieldErrors;
     return {
       success: false,
-      error: "Existem campos obrigatórios em falta ou com formato inválido.",
+      error: "Existem campos obrigatórios em falta ou com valores inválidos.",
       fieldErrors: flatErrors as Record<string, string[]>,
     };
   }
@@ -82,7 +84,7 @@ export async function submitRegistration(
       };
     }
 
-    // 5. Chamada à Stored Procedure atómica actualizada (com email e custom_role)
+    // 5. Chamada à Stored Procedure atómica actualizada (migração 00010)
     const { data: rpcResult, error: rpcError } = await supabase.rpc(
       "submit_public_registration",
       {
@@ -92,11 +94,16 @@ export async function submitRegistration(
         p_sex: data.sex,
         p_phone: data.phone,
         p_email: data.email,
+        p_marital_status: data.maritalStatus,
+        p_birth_date: data.birthDate,
+        p_age_group: data.ageGroup,
+        p_education_level: data.educationLevel,
         p_local_church: data.localChurch,
         p_ecclesiastical_district: data.ecclesiasticalDistrict,
         p_municipality: data.municipality,
+        p_member_category: data.memberCategory,
         p_organizational_role: data.organizationalRole,
-        p_custom_role: data.organizationalRole === "Outro" ? data.customRole ?? null : null,
+        p_custom_role: null,
         p_participant_category: data.participantCategory,
         p_delegation_responsible: data.delegationResponsible ?? null,
         p_organization_id: null,
@@ -111,7 +118,7 @@ export async function submitRegistration(
         return {
           success: false,
           error:
-            "A capacidade limite de 500 participantes para esta Conferência foi atingida. As novas inscrições estão bloqueadas.",
+            `A capacidade limite de ${CONFERENCE_CONFIG.capacity} participantes para esta Conferência foi atingida. As novas inscrições estão bloqueadas.`,
         };
       }
 
@@ -122,6 +129,36 @@ export async function submitRegistration(
         return {
           success: false,
           error: "As inscrições para esta Conferência foram encerradas.",
+        };
+      }
+
+      if (
+        rpcError.message.includes("AGE_OUT_OF_RANGE") ||
+        rpcError.message.includes("FUTURE_BIRTH_DATE") ||
+        rpcError.message.includes("INVALID_BIRTH_DATE") ||
+        rpcError.code === "P0013"
+      ) {
+        return {
+          success: false,
+          error:
+            "A data de nascimento é inválida ou a idade calculada não se enquadra nas faixas etárias definidas (11 a 30 anos).",
+          fieldErrors: {
+            birthDate: [
+              "Verifique a data de nascimento: a idade deve estar entre 11 e 30 anos.",
+            ],
+          },
+        };
+      }
+
+      if (
+        rpcError.message.includes("INVALID_PASTORAL_CHARGE") ||
+        rpcError.message.includes("INVALID_INTENDENCIA") ||
+        rpcError.code === "P0014"
+      ) {
+        return {
+          success: false,
+          error:
+            "Os dados submetidos não passaram na validação de integridade do servidor.",
         };
       }
 

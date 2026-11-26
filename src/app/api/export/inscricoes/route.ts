@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentAdmin } from "@/features/administration/actions/auth-actions";
 import { generateCsvContent } from "@/lib/export/sanitize";
-import { formatGender, formatOrganizationalRole } from "@/lib/utils";
+import { formatGender, formatOrganizationalRole, formatBirthDate } from "@/lib/utils";
 import { CONFERENCE_CONFIG } from "@/lib/config";
 import { checkExportRateLimit } from "@/lib/security/rate-limit";
 import type { Registration, RegistrationStatus } from "@/types/database.types";
@@ -56,6 +56,8 @@ export async function GET(request: NextRequest) {
   const districtFilter = searchParams.get("district") || "all";
   const municipalityFilter = searchParams.get("municipality") || "all";
   const categoryFilter = searchParams.get("category") || "all";
+  const ageGroupFilter = searchParams.get("ageGroup") || "all";
+  const memberCategoryFilter = searchParams.get("memberCategory") || "all";
 
   const supabase = await createClient();
 
@@ -93,6 +95,12 @@ export async function GET(request: NextRequest) {
   if (categoryFilter !== "all") {
     query = query.eq("participant_category", categoryFilter);
   }
+  if (ageGroupFilter !== "all") {
+    query = query.eq("age_group", ageGroupFilter);
+  }
+  if (memberCategoryFilter !== "all") {
+    query = query.eq("member_category", memberCategoryFilter);
+  }
 
   query = query.order("full_name", { ascending: true });
 
@@ -107,13 +115,17 @@ export async function GET(request: NextRequest) {
     "Código de Inscrição",
     "Nome Completo",
     "Sexo",
+    "Estado Civil",
+    "Data de Nascimento",
+    "Faixa-etária",
+    "Grau de Escolaridade",
     "Telefone",
     "E-mail",
-    "Cargo Pastoral",
     "Intendência",
+    "Cargo Pastoral",
     "Município de Residência",
+    "Categoria de Membro",
     "Função Organizacional",
-    "Especificação da Função",
     "Categoria de Participação",
     "Responsável Delegação",
     "Estado da Inscrição",
@@ -139,13 +151,17 @@ export async function GET(request: NextRequest) {
       r.registration_code,
       r.full_name,
       formatGender(r.sex),
+      r.marital_status || "—",
+      formatBirthDate(r.birth_date),
+      r.age_group || "—",
+      r.education_level || "—",
       r.phone,
       r.email || "—",
-      r.local_church,
       r.ecclesiastical_district,
+      r.local_church,
       r.municipality,
+      r.member_category || "—",
       formatOrganizationalRole(r.organizational_role, r.custom_role),
-      r.organizational_role === "Outro" ? r.custom_role || "—" : "—",
       r.participant_category,
       r.delegation_responsible || "—",
       statusPt[r.status] || r.status,
@@ -165,7 +181,14 @@ export async function GET(request: NextRequest) {
     entity_id: conference.id,
     after_data: {
       totalExported: rows.length,
-      filters: { statusFilter, districtFilter, municipalityFilter, categoryFilter },
+      filters: {
+        statusFilter,
+        districtFilter,
+        municipalityFilter,
+        categoryFilter,
+        ageGroupFilter,
+        memberCategoryFilter,
+      },
     },
     reason: `Exportação de folha de cálculo CSV de ${rows.length} inscrições pelo utilizador ${currentAdmin.displayName}`,
   });

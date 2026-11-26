@@ -348,6 +348,12 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
                         <span>{p.phone}</span>
                         <span className="text-slate-300">•</span>
                         <span>{formatGender(p.sex)}</span>
+                        {p.age_group && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span>{p.age_group}</span>
+                          </>
+                        )}
                       </div>
                     </td>
 
@@ -358,6 +364,7 @@ export default async function AdminPresencasPage({ searchParams }: SearchProps) 
                       </div>
                       <div className="text-[11px] text-slate-500 mt-0.5">
                         {p.ecclesiastical_district} • {p.municipality}
+                        {p.member_category ? ` • ${p.member_category}` : ""}
                       </div>
                     </td>
 
